@@ -1,0 +1,141 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Blank_A4" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d1b2272d-c615-477e-b6d2-78a7423bc971">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="193"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="802"/>
+	<parameter name="codiEscuela" class="java.lang.String"/>
+	<parameter name="codiAño" class="java.lang.String"/>
+	<parameter name="codiSemestre" class="java.lang.String"/>
+	<parameter name="Escuela" class="java.lang.String"/>
+	<query language="sql"><![CDATA[SELECT 
+   distinct
+    do.Nombre as nombre,
+    m.Ciclo as ciclo,
+	 do.CodigoDocente as  Codigo_Docente
+FROM 
+    Tutoria t
+INNER JOIN 
+    Matriculas m 
+    ON t.CodigoUniversitario = m.CodigoUniversitario and m.Anio= t.Anio and m.Semestre=t.Semestre
+INNER JOIN 
+    Escuelas e 
+    ON e.CodigoEscuela = SUBSTRING(t.CodigoUniversitario, 1, 4)
+INNER JOIN 
+    (
+        SELECT 
+            d.CodigoDocente, 
+            UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Nombre
+        FROM 
+            Sujeto s
+        INNER JOIN 
+            Docente d 
+            ON s.CodigoSujeto = d.CodigoSujeto
+    ) do 
+    ON t.CodigoDocente = do.CodigoDocente
+WHERE 
+   t.CodigoUniversitario LIKE $P{codiEscuela}
+    AND t.Anio =  $P{codiAño}  and t.Semestre= $P{codiSemestre} 
+    
+]]></query>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+	</field>
+	<field name="ciclo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ciclo"/>
+		<property name="com.jaspersoft.studio.field.label" value="ciclo"/>
+	</field>
+	<field name="Codigo_Docente" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="Codigo_Docente"/>
+		<property name="com.jaspersoft.studio.field.label" value="Codigo_Docente"/>
+	</field>
+	<variable name="contador" class="java.lang.Integer">
+		<expression><![CDATA[$V{contador} + 1
+]]></expression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<background splitType="Stretch"/>
+	<title height="145" splitType="Stretch">
+		<element kind="staticText" uuid="5850823a-1aa4-4f08-85d2-b4e67990a601" x="180" y="10" width="200" height="30" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[REPORTE DE TUTORES]]></text>
+		</element>
+		<element kind="textField" uuid="8e4fd0c9-07ab-4723-a426-2ff922ef6567" x="494" y="0" width="56" height="15" pattern="MMMMM dd, yyyy" hTextAlign="Right">
+			<expression><![CDATA[new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()).toUpperCase()
+]]></expression>
+		</element>
+		<element kind="staticText" uuid="34134224-7ac9-44e1-ac04-93e2645055bc" x="454" y="0" width="40" height="15">
+			<text><![CDATA[FECHA:]]></text>
+		</element>
+		<element kind="staticText" uuid="1deb3f44-ae87-4e1f-a382-f878080ebc4d" x="454" y="15" width="40" height="15">
+			<text><![CDATA[HORA:]]></text>
+		</element>
+		<element kind="textField" uuid="681c0a8c-45a0-4cef-8c18-9b6464df9858" x="500" y="15" width="50" height="15" pattern="HH:mm" hTextAlign="Right">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="staticText" uuid="0190361a-5bf1-4546-8b12-88a9f6a4dec9" x="0" y="80" width="100" height="20" bold="true">
+			<text><![CDATA[AÑO:]]></text>
+		</element>
+		<element kind="staticText" uuid="8701f02f-92e9-4b27-9608-ef14f71df448" x="0" y="100" width="100" height="20" bold="true">
+			<text><![CDATA[SEMESTRE:]]></text>
+		</element>
+		<element kind="staticText" uuid="01143a78-276a-48f4-9a54-4ed82aeebb1b" x="0" y="120" width="100" height="20" bold="true">
+			<text><![CDATA[ESCUELA:]]></text>
+		</element>
+		<element kind="textField" uuid="19c282db-c411-4400-a4bd-053825fa4b16" x="100" y="120" width="380" height="20">
+			<expression><![CDATA[$P{Escuela}]]></expression>
+		</element>
+		<element kind="textField" uuid="91d0f624-deb9-4a94-89f1-d234465d1cff" x="100" y="79" width="380" height="21">
+			<expression><![CDATA[$P{codiAño}]]></expression>
+		</element>
+		<element kind="textField" uuid="e0e36677-5390-4779-a7c4-1afbbfbe1551" x="100" y="100" width="380" height="20">
+			<expression><![CDATA[$P{codiSemestre}]]></expression>
+		</element>
+		<element kind="staticText" uuid="32d97149-10d0-4465-aa9d-b1933913d8d7" x="0" y="0" width="100" height="30" fontSize="19.0">
+			<text><![CDATA[UNJFSC]]></text>
+		</element>
+		<element kind="staticText" uuid="f406f45b-61ac-4454-9062-48e85d05f7a4" x="0" y="20" width="100" height="20" fontSize="11.0">
+			<text><![CDATA[Gestión de Tutores]]></text>
+		</element>
+	</title>
+	<pageHeader height="6" splitType="Stretch">
+		<element kind="line" uuid="e1ad565a-337a-4a39-913c-8031f8377ef3" x="5" y="-1" width="560" height="1"/>
+	</pageHeader>
+	<columnHeader height="27" splitType="Stretch">
+		<element kind="staticText" uuid="95c9ffae-35ff-4a94-949b-6a3d25c7733c" x="80" y="0" width="220" height="20" bold="true">
+			<text><![CDATA[NOMBRE DEL DOCENTE]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="868f4040-279a-4084-9fc3-d2fa8a25dd15"/>
+		</element>
+		<element kind="staticText" uuid="7a58b0a8-5ab0-42a9-9454-f9d44ee8d807" x="469" y="0" width="85" height="20" bold="true">
+			<text><![CDATA[CICLO]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="849bd83f-288b-40d7-b498-3e3fedecb64b"/>
+		</element>
+		<element kind="line" uuid="dd474615-a22d-46f5-bb8f-90937eb860e1" x="5" y="20" width="560" height="1"/>
+		<element kind="staticText" uuid="306edac9-c5a2-414a-8ca3-2e2f5a7a5d93" x="356" y="0" width="100" height="20" fontSize="12.0" bold="true">
+			<text><![CDATA[Codigo_Docente]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7affc51f-5607-4593-a327-90ad49b6629e"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="46" splitType="Stretch">
+			<element kind="textField" uuid="d0188d2f-72be-473e-8c0b-e016e3b55516" x="80" y="2" width="230" height="20">
+				<expression><![CDATA[$F{nombre}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="868f4040-279a-4084-9fc3-d2fa8a25dd15"/>
+			</element>
+			<element kind="textField" uuid="a856a07c-b4d0-41e0-b164-975650ad36a9" x="470" y="2" width="84" height="20">
+				<expression><![CDATA[$F{ciclo}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="849bd83f-288b-40d7-b498-3e3fedecb64b"/>
+			</element>
+			<element kind="textField" uuid="c58e2edb-d68e-4541-a5ad-5d88fe8fddf5" x="5" y="2" width="65" height="20">
+				<expression><![CDATA[$V{contador}]]></expression>
+			</element>
+			<element kind="textField" uuid="615ab5f4-e075-4dad-be20-ef881233024b" x="355" y="2" width="100" height="20">
+				<expression><![CDATA[$F{Codigo_Docente}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7affc51f-5607-4593-a327-90ad49b6629e"/>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

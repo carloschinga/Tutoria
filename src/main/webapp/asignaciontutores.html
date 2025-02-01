@@ -1,0 +1,47 @@
+<h3>Asignación de tutores</h3>
+
+<p>Selecciona una Escuela y un Ciclo</p>
+<div class="form-group">
+    <label for="escuelas">Escuela:</label>
+    <select id="escuelas" class="form-control">
+        <option value="" selected disabled>Seleccione la escuela</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="ciclos">Ciclo:</label>
+    <select id="ciclos" class="form-control">
+        <option value="" selected disabled>Seleccione el ciclo</option>
+    </select>
+</div>
+
+
+<button class="btn btn-sm btn-primary mb-2" id="asignar">Asignar</button>
+<button class="btn btn-sm btn-primary mb-2" id="Grabar" style="display:none">Grabar</button>
+<button class="btn btn-sm btn-primary mb-2" id="modificar">Modificar</button>
+<button class="btn btn-sm btn-primary mb-2" id="Grabarmodificar" style="display:none">Grabar</button>
+<div id="div-todos" style="display:none">
+    <input type="checkbox" id="select-all-checkbox"><label for="select-all-checkbox">Seleccionar todos</label>
+</div>
+<div class="form-group" id="tutor-select" style="display:none">
+    <label for="Docentes">Tutor:</label>
+    <select id="Docentes" class="form-control">
+        <option value="" selected disabled>Seleccione el Tutor</option>
+    </select>
+</div>
+
+<div class="table-responsive">
+    <table id="tabla-estudiantes" class="table table-striped table-bordered table-sm" style="width:100%">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Estudiante</th>
+                <th>Tutor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán las filas dinámicamente -->
+        </tbody>
+    </table>
+</div>
+<script src="js/asignaciontutor.js"></script>
