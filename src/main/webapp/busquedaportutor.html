@@ -24,21 +24,17 @@
 </div>
 
 <div class="form-group">
-    <label for="escuelas">Escuela:</label>
-    <select id="cmbEscuelas" class="form-control">
-        <option value="" selected disabled>Seleccione la escuela</option>
-    </select>
-</div>
-<p>Escribe el nombre del alumno para buscar:</p>
+    <label for="nombreAlumno">Alumno:</label>
+    <input type="text" id="inputAlumno" class="form-control" placeholder="Escribe el nombre..." autocomplete="off"></div>
+
 <div class="form-group">
-    <label for="nombreAlumno">Nombre del Alumno:</label>
-    <input type="text" id="inputAlumno" class="form-control" placeholder="Escribe el nombre..." autocomplete="off">
+    <button class="btn btn-sm btn-primary mb-2" id="buscarxtutor">Buscar</button>
 </div>
 <!-- Popup -->
+<hr/>
 <div id="popupOverlay"></div>
 <div id="popup">
-    <h3>Resultado de la Búsqueda</h3>
-    <p id="resultadoTutor"></p>
-    <button id="cerrarPopup">Cerrar</button>
+    <p>Resultado de la Búsqueda</p>
+    
 </div>
 <script src="js/busquedaportutor.js" defer></script>

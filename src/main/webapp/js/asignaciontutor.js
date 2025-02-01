@@ -154,7 +154,7 @@ $(document).ready(function () {
         $("#Grabar").css("display", 'none');
         $("#div-todos").css("display", 'none');
         editar = false;
-        $("#modificar").text("modificar");
+        $("#modificar").text("Modificar");
         $(".select-docente").css("display", 'none');
         $("#modificar").css("display", 'inline-block');
         $("#asignar").css("display", 'inline-block');
@@ -171,7 +171,7 @@ $(document).ready(function () {
         $("#Grabar").css("display", 'none');
         $("#div-todos").css("display", 'none');
         editar = false;
-        $("#modificar").text("modificar");
+        $("#modificar").text("Modificar");
         $(".select-docente").css("display", 'none');
         $("#modificar").css("display", 'inline-block');
         $("#asignar").css("display", 'inline-block');
@@ -211,7 +211,7 @@ $(document).ready(function () {
     $("#modificar").click(function () {
         if (editar) {
             editar = false;
-            $("#modificar").text("modificar");
+            $("#modificar").text("Modificar");
             $(".select-docente").css("display", 'none');
             $(".nombre-docente").css("display", 'block');
             $("#Grabarmodificar").css("display", 'none');
@@ -349,7 +349,7 @@ $(document).ready(function () {
                         if (tabla) {
                             tabla.ajax.reload();
                             editar = false;
-                            $("#modificar").text("modificar");
+                            $("#modificar").text("Modificar");
                             $(".select-docente").css("display", 'none');
                             $(".nombre-docente").css("display", 'block');
                             $("#Grabarmodificar").css("display", 'none');
