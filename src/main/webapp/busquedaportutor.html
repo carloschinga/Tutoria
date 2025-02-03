@@ -1,40 +1,94 @@
 
-<style>
-    button#cerrarPopup {
-        background-color: #007bff;
-        color: white;
-        padding: 8px 12px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    button#cerrarPopup:hover {
-        background-color: #0056b3;
-    }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda por Tutor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-</style>
-<h3>Busqueda por Tutor</h3>
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-<p>Selecciona un Semestre Y Una Escuela</p>
-<div class="form-group">
-    <label for="semestreacademico">Semestre:</label>
-    <select id="cmbSemestreAcademico" class="form-control">
-        <option value="" selected disabled>Seleccione El Semestre</option>
-    </select>
-</div>
+        button:hover {
+            background-color: #0056b3;
+        }
 
-<div class="form-group">
-    <label for="nombreAlumno">Alumno:</label>
-    <input type="text" id="inputAlumno" class="form-control" placeholder="Escribe el nombre..." autocomplete="off"></div>
+        /* Estilos para el popup */
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
 
-<div class="form-group">
-    <button class="btn btn-sm btn-primary mb-2" id="buscarxtutor">Buscar</button>
-</div>
-<!-- Popup -->
-<hr/>
-<div id="popupOverlay"></div>
-<div id="popup">
-    <p>Resultado de la Búsqueda</p>
-    
-</div>
-<script src="js/busquedaportutor.js" defer></script>
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            text-align: center;
+            width: 300px;
+        }
+
+        #cerrarPopup {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>Búsqueda por Tutor</h3>
+    <p>Selecciona un Semestre y una Escuela</p>
+
+    <div class="form-group">
+        <label for="cmbSemestreAcademico">Semestre:</label>
+        <select id="cmbSemestreAcademico" class="form-control">
+            <option value="" selected disabled>Seleccione el Semestre</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="inputAlumno">Alumno:</label>
+        <input type="text" id="inputAlumno" class="form-control" placeholder="Escribe el nombre..." autocomplete="off">
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-sm btn-primary mb-2" id="buscarxtutor">Buscar</button>
+    </div>
+
+    <hr/>
+
+    <!-- Popup -->
+    <div id="popupOverlay"></div>
+    <div id="popup">
+        <p><strong>Resultado de la Búsqueda</strong></p>
+        <div id="resultadoTutor"></div>
+        <button id="cerrarPopup">Cerrar</button>
+    </div>
+
+    <script src="js/busquedaportutor.js" defer></script>
+
+</body>
+</html>
+
+
