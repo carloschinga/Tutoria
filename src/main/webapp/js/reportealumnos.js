@@ -101,14 +101,14 @@ $(document).ready(function () {
         }
     });
     $('#btnImprimir').click(function () {
-        // Obtener los valores de los campos seleccionados
+        // Obtener los valores seleccionados
         let codiEscuela = $('#cmbEscuelas').val();
-        let codiDocente = $('#cmbDocentes').val();
+        let codiDocente = $('#cmbDocentes').val(); // Código del docente seleccionado
         let Semestre = $('#cmbSemestreAcademico option:selected').text();
 
-        // Validar los valores obtenidos
+        // Validar que los datos estén completos
         if (!codiEscuela || !Semestre || !codiDocente) {
-            alert("Por favor, selecciona un semestre y una escuela y un tutor.");
+            alert("Por favor, selecciona una escuela, un semestre y un tutor.");
             return;
         }
 
@@ -118,6 +118,7 @@ $(document).ready(function () {
             alert("Formato de semestre inválido. Asegúrate de seleccionar un semestre correcto.");
             return;
         }
+
         let codiAño = parts[0].trim();
         let codiSemestre = parts[1].trim();
         let escuela = $("#cmbEscuelas option:selected").text();
@@ -149,14 +150,13 @@ $(document).ready(function () {
                 codiEscuela: codiEscuela,
                 codiAño: codiAño,
                 codiSemestre: codiSemestre,
-                nombretutor:codiDocente
+                codigoTutor: codiDocente // Enviar el tutor seleccionado
             },
             beforeSend: function () {
                 console.log("Procesando solicitud para generar el reporte...");
             },
-            success: function (data, status, xhr) {
+            success: function (data) {
                 console.log(data);
-                console.log(data.lista);
 
                 // Pasar los datos y los parámetros al generador de PDF
                 exportToPDF(data.lista, {
@@ -164,7 +164,7 @@ $(document).ready(function () {
                     codiEscuela: codiEscuela,
                     codiAño: codiAño,
                     codiSemestre: codiSemestre,
-                    nombretutor:codiDocente
+                    codigoTutor: codiDocente
                 });
             },
             error: function (xhr, status, error) {
@@ -182,7 +182,7 @@ function configurePage(doc) {
     doc.setFont('helvetica', 'normal');
 }
 function addTable(doc, data) {
-    const headers = ["#", "Nombre", "Código Universitari", "Ciclo"];
+    const headers = ["#", "Nombre", "Código Universitario", "Ciclo"];
 
     // Crear el cuerpo de la tabla con el contador
     const body = data.map((row, index) => [

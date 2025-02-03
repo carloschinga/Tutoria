@@ -15,7 +15,15 @@ public class ReporteTutoresParametro {
     private String codiSemestre;
     private String escuela;
     private String nombretutor;
+    private String CodigoTutor;
 
+    public String getCodigoTutor() {
+        return CodigoTutor;
+    }
+
+    public void setCodigoTutor(String CodigoTutor) {
+        this.CodigoTutor = CodigoTutor;
+    }
     public String getNombretutor() {
         return nombretutor;
     }

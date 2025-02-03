@@ -27,40 +27,39 @@ public class ReporteAlumnosjpaController extends JpaPadre {
 
     // Método para obtener los datos del reporte usando los parámetros del DTO
     public List<ReporteAlumnos> getReportData(ReporteTutoresParametro params) {
-        String query
-                = "SELECT DISTINCT "
-                + "    UPPER(CONCAT(a.Nombres, ' ', a.Apellidos)) AS NombreAlumno, "
-                + "    m.Ciclo AS Ciclo, "
-                + "    a.CodigoUniversitario AS Codigo_Universitario "
-                + "FROM "
-                + "    Tutoria t "
-                + "INNER JOIN "
-                + "    Matriculas m "
-                + "    ON t.CodigoUniversitario = m.CodigoUniversitario "
-                + "    AND m.Anio = t.Anio "
-                + "    AND m.Semestre = t.Semestre "
-                + "INNER JOIN "
-                + "    Escuelas e "
-                + "    ON e.CodigoEscuela = SUBSTRING(t.CodigoUniversitario, 1, 4) "
-                + "INNER JOIN "
-                + "    (SELECT "
-                + "         d.CodigoDocente, "
-                + "         UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Nombre "
-                + "     FROM "
-                + "         Sujeto s "
-                + "     INNER JOIN "
-                + "         Docente d "
-                + "         ON s.CodigoSujeto = d.CodigoSujeto "
-                + "    ) do "
-                + "    ON t.CodigoDocente = do.CodigoDocente "
-                + "INNER JOIN "
-                + "    Alumnos a "
-                + "    ON t.CodigoUniversitario = a.CodigoUniversitario "
-                + "WHERE "
-                + "    t.CodigoUniversitario LIKE ? "
-                + // Se debe pasar el valor como parámetro en la consulta preparada
-                "    AND t.Anio = ? "
-                + "    AND t.Semestre = ?";
+          String query = "SELECT DISTINCT "
+            + "    UPPER(CONCAT(a.Nombres, ' ', a.Apellidos)) AS NombreAlumno, "
+            + "    m.Ciclo AS Ciclo, "
+            + "    a.CodigoUniversitario AS Codigo_Universitario "
+            + "FROM "
+            + "    Tutoria t "
+            + "INNER JOIN "
+            + "    Matriculas m "
+            + "    ON t.CodigoUniversitario = m.CodigoUniversitario "
+            + "    AND m.Anio = t.Anio "
+            + "    AND m.Semestre = t.Semestre "
+            + "INNER JOIN "
+            + "    Escuelas e "
+            + "    ON e.CodigoEscuela = SUBSTRING(t.CodigoUniversitario, 1, 4) "
+            + "INNER JOIN "
+            + "    (SELECT "
+            + "         d.CodigoDocente, "
+            + "         UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Nombre "
+            + "     FROM "
+            + "         Sujeto s "
+            + "     INNER JOIN "
+            + "         Docente d "
+            + "         ON s.CodigoSujeto = d.CodigoSujeto "
+            + "    ) do "
+            + "    ON t.CodigoDocente = do.CodigoDocente "
+            + "INNER JOIN "
+            + "    Alumnos a "
+            + "    ON t.CodigoUniversitario = a.CodigoUniversitario "
+            + "WHERE "
+            + "    t.CodigoUniversitario LIKE ? "
+            + "    AND t.Anio = ? "
+            + "    AND t.Semestre = ? "
+            + "    AND t.CodigoDocente = ?";  // Agregado filtro por tutor
 
         // Obtener el EntityManager de JPA
         EntityManager em = getEntityManager();
@@ -71,6 +70,7 @@ public class ReporteAlumnosjpaController extends JpaPadre {
         nativeQuery.setParameter(1, "%" + params.getCodiEscuela() + "%");  // Asumí que codiEscuela es un substring
         nativeQuery.setParameter(2, params.getCodiAño());
         nativeQuery.setParameter(3, params.getCodiSemestre());
+        nativeQuery.setParameter(4, params.getCodigoTutor()); // Se agrega el parámetro del tutor
 
         // Ejecutar la consulta y obtener la lista de resultados
         return nativeQuery.getResultList();  // Devuelve una lista de resultados
