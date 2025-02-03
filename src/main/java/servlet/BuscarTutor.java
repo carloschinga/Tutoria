@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @WebServlet(name = "BuscarTutor", urlPatterns = {"/BuscarTutor"})
@@ -31,8 +32,7 @@ public class BuscarTutor extends HttpServlet {
 
             // Obtener parámetros
             String nombreAlumno = request.getParameter("nombre");
-            String anioStr = request.getParameter("anio");
-            String semestreStr = request.getParameter("semestre");
+            String codiSeme = request.getParameter("codiSeme");
 
             // Validaciones básicas
             if (nombreAlumno == null || nombreAlumno.trim().isEmpty()) {
@@ -41,23 +41,14 @@ public class BuscarTutor extends HttpServlet {
                 return;
             }
 
-            int anio = 0, semestre = 0;
-            try {
-                anio = Integer.parseInt(anioStr);
-                semestre = Integer.parseInt(semestreStr);
-            } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"resultado\": \"error\", \"mensaje\": \"Año y semestre deben ser números válidos.\"}");
-                return;
-            }
-
             // Obtener la base de datos desde la sesión
             String empr = (String) session.getAttribute("empr");
 
             // Consultar el tutor
             TutorDAO tutorDAO = new TutorDAO(empr);
-            JSONObject resultado = tutorDAO.obtenerTutoresPorAnioSemestre(anio, semestre, nombreAlumno);
+            JSONArray resultado = tutorDAO.obtenerTutoriaPorSemestre(Integer.parseInt(codiSeme), nombreAlumno);
 
+            
             // Devolver la respuesta en formato JSON
             response.setStatus(HttpServletResponse.SC_OK);
             out.print(resultado.toString());

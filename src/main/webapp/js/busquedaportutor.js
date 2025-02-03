@@ -18,6 +18,7 @@ $(document).ready(function () {
     // Cargar semestres
     $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
+            console.log(data);
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
 
@@ -58,20 +59,17 @@ $(document).ready(function () {
             }, 3000);
             return;
         }
+        let codiSeme = $('#cmbSemestreAcademico').val();
 
-        let url = `BuscarTutor?nombre=${encodeURIComponent(nombreAlumno)}`;
 
-        $.getJSON(url)
-                .done(function (data) {
-                    if (data.resultado === 'OK') {
-                        $.fn.mostrarPopup(`<b>Alumno:</b> ${data.alumno} <br> <b>Tutor:</b> ${data.tutor} <br> <b>Ciclo:</b> ${data.ciclo}`);
-                    } else {
-                        $.fn.mostrarPopup(`<b>Error:</b> ${data.message}`);
-                    }
-                })
-                .fail(function () {
-                    $.fn.mostrarPopup('<b>Error:</b> No se pudo conectar con el servidor. Intente nuevamente.');
-                });
+        let params = {nombre: nombreAlumno, codiSeme: codiSeme};
+        //let url = `BuscarTutor?nombre=${encodeURIComponent(nombreAlumno)}&codiSeme:`;
+
+        $.getJSON("BuscarTutor", params, function (data) {
+            // aqui poner la grilla
+        }).fail(function () {
+            $.fn.mostrarPopup('<b>Error:</b> No se pudo conectar con el servidor. Intente nuevamente.');
+        });
     });
 
     // Ejecutar búsqueda al presionar Enter

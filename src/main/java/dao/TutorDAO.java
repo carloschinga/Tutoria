@@ -16,56 +16,46 @@ public class TutorDAO extends JpaPadre {
         return super.getEntityManager();
     }
 
-    public JSONObject obtenerTutoresPorAnioSemestre(int anio, int semestre, String nombre) {
-        EntityManager em = null;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            em = getEntityManager();
+       public JSONArray obtenerTutoriaPorSemestre(int codigoSemestre, String nombreAlumno) {
+            EntityManager em = getEntityManager();
+        // Asegurar que nombreAlumno se use correctamente en LIKE
+        String nombreAlumnoLike = nombreAlumno + "%"; 
 
-            String sql = "WITH AlumnosConNombre AS ("
-                    + "    SELECT CodigoUniversitario, UPPER(CONCAT(Apellidos, ' ', Nombres)) AS Nombre "
-                    + "    FROM Alumnos "
-                    + "    WHERE Apellidos LIKE :nombre"
-                    + ") "
-                    + "SELECT "
-                    + "    a.Nombre AS Alumno, "
-                    + "    UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Tutor, "
-                    + "    m.Ciclo AS Ciclo "
-                    + "FROM Tutoria t "
-                    + "INNER JOIN Docente d ON d.CodigoDocente = t.CodigoDocente "
-                    + "INNER JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto "
-                    + "INNER JOIN Matriculas m ON t.CodigoUniversitario = m.CodigoUniversitario "
-                    + "    AND m.Anio = :anio "
-                    + "    AND m.Semestre = :semestre "
-                    + "INNER JOIN Escuelas e ON e.CodigoEscuela = SUBSTRING(m.CodigoUniversitario, 1, 4) "
-                    + "INNER JOIN SemestreAcademico se ON m.Anio = se.Anio AND m.Semestre = se.Semestre "
-                    + "INNER JOIN AlumnosConNombre a ON a.CodigoUniversitario = m.CodigoUniversitario "
-                    + "WHERE a.Nombre LIKE :nombre "
-                    + "FOR JSON PATH;";
+        // Consulta SQL con `?` en lugar de `:parametro`
+        String sql = "WITH AlumnosConNombre AS ( " +
+                     "    SELECT CodigoUniversitario, UPPER(CONCAT(Apellidos, ' ', Nombres)) AS Nombre " +
+                     "    FROM Alumnos " +
+                     "    WHERE Apellidos LIKE 'DE LA%' " +
+                     ") " +
+                     "SELECT " +
+                     "    a.Nombre AS Alumno, " +
+                     "    UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Tutor, " +
+                     "    m.Ciclo AS Ciclo " +
+                     "FROM " +
+                     "    Tutoria t " +
+                     "INNER JOIN Docente d ON d.CodigoDocente = t.CodigoDocente " +
+                     "INNER JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto " +
+                     "INNER JOIN Matriculas m ON t.CodigoUniversitario = m.CodigoUniversitario " +
+                     "INNER JOIN Escuelas e ON e.CodigoEscuela = SUBSTRING(m.CodigoUniversitario, 1, 4) " +
+                     "INNER JOIN SemestreAcademico se ON m.Anio = se.Anio AND m.Semestre = se.Semestre " +
+                     "    AND se.CodigoSemestre = ? " +
+                     "INNER JOIN AlumnosConNombre a ON a.CodigoUniversitario = m.CodigoUniversitario " +
+                     "WHERE a.Nombre LIKE ? " +
+                     "FOR JSON PATH;";
 
-            Query query = em.createNativeQuery(sql);
-            query.setParameter("anio", anio);
-            query.setParameter("semestre", semestre);
-            query.setParameter("nombre", nombre + "%");  // Permite mayor flexibilidad
+        // Crear la consulta nativa usando JPA
+        Query query = em.createNativeQuery(sql);
 
-            List<String> resultList = query.getResultList();
+        // Establecer los parámetros en orden
+        query.setParameter(1, codigoSemestre);
+        query.setParameter(2, nombreAlumnoLike);
 
-            if (resultList.isEmpty()) {
-                jsonObject.put("resultado", "vacio");
-            } else {
-                String jsonResult = resultList.get(0);
-                jsonObject = new JSONObject(jsonResult);
-                jsonObject.put("resultado", "ok");
-            }
-        } catch (Exception ex) {
-            jsonObject.put("resultado", "error");
-            jsonObject.put("mensaje", ex.getMessage());
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
-        return jsonObject;
+        // Ejecutar la consulta y obtener el resultado JSON
+        String jsonResult = (String) query.getSingleResult();
+        
+        // Convertir la cadena JSON a JSONArray
+        return new JSONArray(jsonResult);
     }
 }
+
 

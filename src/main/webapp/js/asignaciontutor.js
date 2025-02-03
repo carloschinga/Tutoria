@@ -3,9 +3,7 @@ $(document).ready(function () {
     let editar = false;
     let listadocentes;
     
-
     //cargar datos inicales
-   
     $.getJSON("RegistrarSession", {rol: 1}, function (data) {
         $("#resultado").text(data.resultado);
 
@@ -65,7 +63,6 @@ $(document).ready(function () {
             }
         });
     });
-
 
     //funciones
     $.fn.listar = function () {
