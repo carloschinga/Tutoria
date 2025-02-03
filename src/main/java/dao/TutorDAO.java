@@ -4,6 +4,7 @@ import dto.TutorDto;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
+import org.json.JSONObject;
 
 public class TutorDAO extends JpaPadre {
 
@@ -17,56 +18,55 @@ public class TutorDAO extends JpaPadre {
     }
 
     // Método para obtener el tutor del alumno según el nombre del alumno
-    public TutorDto getTutorByAlumno(String nombreAlumno) {
-       String query = "SELECT DISTINCT " +
-               "    a.Nombre AS Alumno, " +
-               "    UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS TUTOR, " +
-               "    m.Ciclo AS ciclo " +
-               "FROM " +
-               "    Tutoria t " +
-               "    INNER JOIN Docente d ON d.CodigoDocente = t.CodigoDocente " +
-               "    INNER JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto " +
-               "    INNER JOIN Matriculas m " +
-               "        ON t.CodigoUniversitario = m.CodigoUniversitario " +
-               "        AND m.Anio = t.Anio " +
-               "        AND m.Semestre = t.Semestre " +
-               "    INNER JOIN Escuelas e " +
-               "        ON e.CodigoEscuela = SUBSTRING(t.CodigoUniversitario, 1, 4) " +
-               "    INNER JOIN ( " +
-               "        SELECT " +
-               "            a.CodigoUniversitario, " +
-               "            UPPER(CONCAT(a.Nombres, ' ', a.Apellidos)) AS Nombre " +
-               "        FROM Alumnos a " +
-               "    ) a ON a.CodigoUniversitario = t.CodigoUniversitario " +
-               "WHERE a.Nombre LIKE ?";
+    public JSONObject obtenerTutoresPorAnioSemestre(int anio, int semestre, String nombre) {
+        try {
+            EntityManager em = getEntityManager();
 
+            // Consulta SQL que devuelve JSON directamente
+            String sql = "WITH AlumnosConNombre AS ("
+                    + "    SELECT CodigoUniversitario, UPPER(CONCAT(Apellidos, ' ', Nombres)) AS Nombre "
+                    + "    FROM Alumnos "
+                    + "    WHERE Apellidos LIKE 'DE LA%'"
+                    + ") "
+                    + "SELECT "
+                    + "    a.Nombre AS Alumno, "
+                    + "    UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Tutor, "
+                    + "    m.Ciclo AS Ciclo "
+                    + "FROM "
+                    + "    Tutoria t "
+                    + "INNER JOIN Docente d ON d.CodigoDocente = t.CodigoDocente "
+                    + "INNER JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto "
+                    + "INNER JOIN Matriculas m ON t.CodigoUniversitario = m.CodigoUniversitario "
+                    + "    AND m.Anio = :anio "
+                    + "    AND m.Semestre = :semestre "
+                    + "INNER JOIN Escuelas e ON e.CodigoEscuela = SUBSTRING(m.CodigoUniversitario, 1, 4) "
+                    + "INNER JOIN SemestreAcademico se ON m.Anio = se.Anio AND m.Semestre = se.Semestre "
+                    + "INNER JOIN AlumnosConNombre a ON a.CodigoUniversitario = m.CodigoUniversitario "
+                    + "WHERE a.Nombre LIKE 'DE LA%' "
+                    + "FOR JSON PATH;";
 
-        // Obtener el EntityManager de JPA
-        EntityManager em = getEntityManager();
-        
-        // Preparar la consulta usando JPA (consulta nativa SQL)
-        Query nativeQuery = em.createNativeQuery(query);
+            // Crear la consulta nativa usando el EntityManager
+            Query query = em.createNativeQuery(sql);
 
-        // Setear el parámetro de la consulta (nombre del alumno)
-        nativeQuery.setParameter(1, "%" + nombreAlumno + "%");
+            // Establecer los parámetros de la consulta
+            query.setParameter("anio", anio);
+            query.setParameter("semestre", semestre);
 
-        // Ejecutar la consulta y obtener el resultado
-        List<Object[]> result = nativeQuery.getResultList();
+            // Ejecutar la consulta y obtener el resultado JSON
+            String jsonResult = (String) query.getSingleResult();
 
-        if (result.isEmpty()) {
-            return null; // Si no se encuentra ningún tutor, retornamos null
+            // Convertir el resultado a JSONObject
+            JSONObject jsonObject = new JSONObject(jsonResult);
+            jsonObject.put("resultado", "ok");
+
+            // Retornar el JSON
+            return jsonObject;
+        } catch (Exception ex) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("resultado", "ok");
+
+            // Retornar el JSON
+            return jsonObject;
         }
-
-        // Tomar el primer resultado
-        Object[] tutorData = result.get(0);  // Primer resultado
-
-        // Crear el objeto TutorDTO con los datos obtenidos
-        TutorDto tutor = new TutorDto();
-        tutor.setAlumno(tutorData[0].toString());  // Nombre del alumno
-        tutor.setTutor(tutorData[1].toString());   // Nombre del tutor
-        tutor.setCiclo(tutorData[2].toString());   // Nombre del ciclo
-
-        return tutor;  // Retornar el DTO con los datos del tutor
     }
 }
-

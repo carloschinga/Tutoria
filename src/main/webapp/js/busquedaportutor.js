@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     // Cargar escuelas
     $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
@@ -12,7 +11,7 @@ $(document).ready(function () {
                 escuelas.append('<option value="' + codigoEscuela + '">' + escuela + '</option>');
             });
         } else {
-            manejarError(data.mensaje, "escuelas");
+            $.fn.manejarError(data.mensaje, "escuelas");
         }
     });
 
@@ -27,80 +26,58 @@ $(document).ready(function () {
                 semestres.append('<option value="' + value.CodigoSemestre + '">' + semestre + '</option>');
             });
         } else {
-            manejarError(data.mensaje, "semestres");
+            $.fn.manejarError(data.mensaje, "semestres");
         }
     });
 
-    // Elementos del popup
-    const inputAlumno = document.getElementById('inputAlumno');
-    const botonBuscar = document.getElementById('buscarxtutor');
-    const popup = document.getElementById('popup');
-    const popupOverlay = document.getElementById('popupOverlay');
-    const resultadoTutor = document.getElementById('resultadoTutor');
-    const cerrarPopup = document.getElementById('cerrarPopup');
+    // Función para mostrar el modal con mensaje
+    $.fn.mostrarPopup = function (mensaje) {
+        $('#MensajeModal').html(mensaje);
+        $('#mensajeModal').modal('show');
+    };
 
-    // Función para mostrar el popup con mensaje
-    function mostrarPopup(mensaje) {
-        resultadoTutor.innerHTML = mensaje;
-        popup.style.display = 'block';
-        popupOverlay.style.display = 'block';
-    }
+    // Cerrar modal al hacer clic en el botón de cerrar o cancelar
+    $('#mensajeModal .close, #mensajeModal .btn-secondary').on('click', function () {
+        $('#mensajeModal').modal('hide');
+    });
 
-    // Función para cerrar el popup
-    function cerrarPopupHandler() {
-        popup.style.display = 'none';
-        popupOverlay.style.display = 'none';
-    }
-
-    // Cerrar popup al hacer clic en el botón
-    cerrarPopup.addEventListener('click', cerrarPopupHandler);
-
-    // Cerrar popup al hacer clic fuera del cuadro
-    popupOverlay.addEventListener('click', cerrarPopupHandler);
-
-    // Función para buscar tutor por nombre de alumno
-    function buscarTutor() {
-        let nombreAlumno = inputAlumno.value.trim();
+    // Ejecutar búsqueda al hacer clic en el botón
+    $('#buscarxtutor').on('click', function () {
+        let nombreAlumno = $('#inputAlumno').val().trim();
         if (!nombreAlumno) {
-            mostrarPopup('<b>Error:</b> Por favor, ingrese el nombre del alumno.');
+            //$.fn.mostrarPopup('');
+            $('#alerta').html("<b>Error:</b> Por favor, ingrese el nombre del alumno.");
+            let alerta = $("#alerta");
+
+            alerta.removeClass("d-none").hide().fadeIn(300); // Mostrar con fadeIn
+
+            setTimeout(function () {
+                alerta.fadeOut(1000, function () {
+                    alerta.addClass("d-none"); // Ocultar después del fadeOut
+                });
+            }, 3000);
             return;
         }
 
         let url = `BuscarTutor?nombre=${encodeURIComponent(nombreAlumno)}`;
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response.status} - ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.resultado === 'OK') {
-                    mostrarPopup(`<b>Alumno:</b> ${data.alumno} <br> <b>Tutor:</b> ${data.tutor} <br> <b>Ciclo:</b> ${data.ciclo}`);
-                } else {
-                    mostrarPopup(`<b>Error:</b> ${data.message}`);
-                }
-            })
-            .catch(error => {
-                mostrarPopup('<b>Error:</b> No se pudo conectar con el servidor. Intente nuevamente.');
-                console.error('Error:', error);
-            });
-    }
-
-    // Ejecutar búsqueda al presionar Enter
-    inputAlumno.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            buscarTutor();
-        }
+        $.getJSON(url)
+                .done(function (data) {
+                    if (data.resultado === 'OK') {
+                        $.fn.mostrarPopup(`<b>Alumno:</b> ${data.alumno} <br> <b>Tutor:</b> ${data.tutor} <br> <b>Ciclo:</b> ${data.ciclo}`);
+                    } else {
+                        $.fn.mostrarPopup(`<b>Error:</b> ${data.message}`);
+                    }
+                })
+                .fail(function () {
+                    $.fn.mostrarPopup('<b>Error:</b> No se pudo conectar con el servidor. Intente nuevamente.');
+                });
     });
 
-    // Ejecutar búsqueda al hacer clic en el botón
-    botonBuscar.addEventListener('click', buscarTutor);
+    // Ejecutar búsqueda al presionar Enter
+    $('#inputAlumno').on('keydown', function (event) {
+        if (event.key === 'Enter') {
+            $('#buscarxtutor').trigger('click');
+        }
+    });
 });
-
-
-
-
-
-

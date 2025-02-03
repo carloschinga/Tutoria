@@ -74,20 +74,7 @@ public class BuscarTutor extends HttpServlet {
             }
 
             TutorDAO tutorDAO = new TutorDAO(empr);
-
-            // Obtener el tutor del alumno
-            TutorDto tutor = tutorDAO.getTutorByAlumno(nombreAlumno);
-
-            if (tutor == null) {
-                response.getWriter().write("{\"resultado\":\"Error\", \"message\":\"No se encontró el tutor para el alumno.\"}");
-            } else {
-                // Enviar la información del alumno y su tutor en formato JSON
-                out.println("{\"resultado\":\"OK\", " +
-            "\"alumno\":\"" + tutor.getAlumno() + "\", " +
-            "\"tutor\":\"" + tutor.getTutor() + "\", " +
-            "\"ciclo\":\"" + tutor.getCiclo()+ "\"}");
-
-            }
+            out.print(tutorDAO.obtenerTutoresPorAnioSemestre(0, 0, empr));
 
         } catch (IOException e) {
             response.getWriter().write("{\"resultado\":\"Error\", \"message\":\"" + e.getMessage() + "\"}");
