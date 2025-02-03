@@ -59,50 +59,48 @@ public class ReporteListaAlumnos extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         try {
-
             HttpSession session = request.getSession(true);
             if (session == null || session.getAttribute("empr") == null) {
                 response.getWriter().write("Error: No estás autenticado. Inicia sesión.");
                 return;
             }
+
             // Obtener los parámetros de la solicitud
             String escuela = request.getParameter("escuela");
             String codiEscuela = request.getParameter("codiEscuela");
             String codiAño = request.getParameter("codiAño");
             String codiSemestre = request.getParameter("codiSemestre");
+            String codigoTutor = request.getParameter("codigoTutor"); // Nuevo parámetro
 
             // Validar los parámetros
-            if (codiEscuela == null || codiAño == null || codiSemestre == null || escuela == null) {
+            if (codiEscuela == null || codiAño == null || codiSemestre == null || escuela == null || codigoTutor == null) {
                 response.getWriter().write("Faltan parámetros para generar el reporte.");
                 return;
             }
 
+            // Crear DTO para los parámetros
             ReporteTutoresParametro reporteTutoresParametro = new ReporteTutoresParametro();
             reporteTutoresParametro.setCodiEscuela(codiEscuela);
-            
-
             reporteTutoresParametro.setCodiAño(codiAño);
             reporteTutoresParametro.setCodiSemestre(codiSemestre);
             reporteTutoresParametro.setEscuela(escuela);
-            // Instanciar el DAO
-            String empr = "";
-            Object emprObj = session.getAttribute("empr");
-            if (emprObj != null) {
-                empr = emprObj.toString();
-            } else {
-                response.getWriter().write("No se ha especificado con que bd trabajara");
+            reporteTutoresParametro.setCodigoTutor(codigoTutor); // Se almacena el tutor
+
+            // Obtener la base de datos desde la sesión
+            String empr = (String) session.getAttribute("empr");
+            if (empr == null) {
+                response.getWriter().write("No se ha especificado con qué BD trabajar.");
                 return;
             }
-            ReporteAlumnosjpaController reporteAlumnosDAO = new ReporteAlumnosjpaController(empr);
 
-            // Obtener los datos para el reporte
+            // Instanciar el DAO y obtener datos
+            ReporteAlumnosjpaController reporteAlumnosDAO = new ReporteAlumnosjpaController(empr);
             List<ReporteAlumnos> listaReportes = reporteAlumnosDAO.getReportData(reporteTutoresParametro);
 
+            // Enviar respuesta en formato JSON
             out.println("{\"resultado\":\"OK\", \"lista\":" + new Gson().toJson(listaReportes) + "}");
-            // Crear un DataSource de JasperReports con los datos
         } catch (IOException e) {
-            // Manejo de errores generales
-            out.println("{\"resultado\":\"ERRROR\", \"message\":" + e.getMessage() + "}");
+            out.println("{\"resultado\":\"ERROR\", \"message\":\"" + e.getMessage() + "\"}");
         }
     }
 
