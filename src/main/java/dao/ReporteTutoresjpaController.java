@@ -54,7 +54,8 @@ public class ReporteTutoresjpaController extends JpaPadre {
                 + "    ) do "
                 + "    ON t.CodigoDocente = do.CodigoDocente "
                 + "WHERE "
-                + "    t.CodigoUniversitario LIKE ? "
+                + "    t.Estado = 'S' "
+                + "     and t.CodigoUniversitario LIKE ? "
                 + "    AND t.Anio = ? "
                 + "    AND t.Semestre = ?;";
 
