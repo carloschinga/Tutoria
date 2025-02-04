@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 @WebServlet(name = "BuscarTutor", urlPatterns = {"/BuscarTutor"})
 public class BuscarTutor extends HttpServlet {
@@ -33,6 +32,7 @@ public class BuscarTutor extends HttpServlet {
             // Obtener parámetros
             String nombreAlumno = request.getParameter("nombre");
             String codiSeme = request.getParameter("codiSeme");
+            String prefijoApellido = request.getParameter("prefijoApellido");
 
             // Validaciones básicas
             if (nombreAlumno == null || nombreAlumno.trim().isEmpty()) {
@@ -41,14 +41,27 @@ public class BuscarTutor extends HttpServlet {
                 return;
             }
 
+            if (codiSeme == null || codiSeme.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.print("{\"resultado\": \"error\", \"mensaje\": \"El código de semestre es obligatorio.\"}");
+                return;
+            }
+
+            if (prefijoApellido == null) {
+                prefijoApellido = ""; // Valor por defecto si no se proporciona
+            }
+
             // Obtener la base de datos desde la sesión
             String empr = (String) session.getAttribute("empr");
 
             // Consultar el tutor
             TutorDAO tutorDAO = new TutorDAO(empr);
-            JSONArray resultado = tutorDAO.obtenerTutoriaPorSemestre(Integer.parseInt(codiSeme), nombreAlumno);
+            JSONArray resultado = tutorDAO.obtenerTutoriaPorSemestre(
+                    Integer.parseInt(codiSeme),
+                    nombreAlumno,
+                    prefijoApellido
+            );
 
-            
             // Devolver la respuesta en formato JSON
             response.setStatus(HttpServletResponse.SC_OK);
             out.print(resultado.toString());
@@ -72,4 +85,3 @@ public class BuscarTutor extends HttpServlet {
         return "Servlet para buscar el tutor de un alumno por año y semestre.";
     }
 }
-
