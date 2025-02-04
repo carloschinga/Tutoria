@@ -1,0 +1,91 @@
+<html lang="es">
+    <head>
+        <title>Asignación de tutores</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Custom fonts for this template-->
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,900" rel="stylesheet">
+        <!-- Custom styles for this template-->
+        <link href="css/sb-admin-2.min.css" rel="stylesheet">
+        <!-- Custom CSS for the style adaptation -->
+        <style>
+            body {
+                font-family: 'Nunito', sans-serif;
+                background-color: #f8f9fc;
+                color: #333;
+            }
+            .container {
+                background-color: #fff;
+                border: 1px solid #ddd;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            h1, label {
+                color: #0056b3;
+            }
+            .form-group label {
+                font-weight: bold;
+            }
+            .btn-primary {
+                background-color: #0056b3;
+                border-color: #004a9f;
+            }
+            .btn-primary:hover {
+                background-color: #004a9f;
+                border-color: #003d86;
+            }
+            .table {
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                margin-top: 20px;
+            }
+            .table thead th {
+                background-color: #0056b3;
+                color: #fff;
+                text-align: center;
+            }
+            .table tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+            .table tbody td {
+                text-align: center;
+            }
+            .diseñosemestre {
+                text-align: right;
+                margin-top: -40px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <a class="btn btn-primary btn-sm rounded" id="mnuAsignacionTutores">Administración</a>
+                    <a class="btn btn-primary btn-sm rounded" id="mnubusquedaportutor">Consulta</a>
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-sm rounded dropdown-toggle" type="button" id="dropdownReportes" data-bs-toggle="dropdown" aria-expanded="false">
+                            Reportes
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownReportes">
+                            <li><a class="dropdown-item" id="mnuReporteTutores" href="#">Reportes</a></li>
+                            <li><a class="dropdown-item" id="mnulistaReporteAlumnos" href="#">Reporte de Alumnos</a></li>
+                        </ul>
+                    </div>
+                    <p class="diseñosemestre" id="semestre"></p>
+                </div>
+                <div class="card-body" id="cardDdetalle">
+                </div>
+            </div>
+        </div>
+        <!-- Scripts -->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+        <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+        <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        <script src="js/sb-admin-2.min.js"></script>
+        <script src="js/paneldirector.js" type="text/javascript"></script>
+    </body>
+</html>

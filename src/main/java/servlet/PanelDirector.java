@@ -1,4 +1,4 @@
-   /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -11,14 +11,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author shaho
+ * @author USER
  */
-@WebServlet(name = "RegistrarSession", urlPatterns = {"/RegistrarSession"})
-public class RegistrarSession extends HttpServlet {
+@WebServlet(name = "paneldirector", urlPatterns = {"/paneldirector"})
+public class PanelDirector extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,18 +31,15 @@ public class RegistrarSession extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
         try (PrintWriter out = response.getWriter()) {
-            HttpSession sesion = request.getSession(true);
-            String rol = request.getParameter("rol");
-            if (rol.equals("1")) { // rol de director
-                sesion.setAttribute("director", "ok");
-            }
-            sesion.setAttribute("docente", "ok");
-            sesion.setAttribute("codigoDocente", "1623");
-            sesion.setAttribute("empr", "a");
-            sesion.setAttribute("facultad", "03");
-            out.print("{\"resultado\":\"ok\"}");
+            
+            String director= request.getParameter("director");  //1 es director, 0 no es director
+            String docente= request.getParameter("docente");
+            String codigodocente = request.getParameter("codigoDocente");
+            String facultad= request.getParameter("facultad");
+            
+            
+            response.sendRedirect("paneldirector.html");
         }
     }
 
