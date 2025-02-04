@@ -38,6 +38,7 @@ public class ReporteAlumnosjpaController extends JpaPadre {
                 + "    ON t.CodigoUniversitario = m.CodigoUniversitario "
                 + "    AND m.Anio = t.Anio "
                 + "    AND m.Semestre = t.Semestre "
+                + "    AND m.TipoMatricula <> 10 "
                 + "INNER JOIN "
                 + "    Escuelas e "
                 + "    ON e.CodigoEscuela = SUBSTRING(t.CodigoUniversitario, 1, 4) "
@@ -60,7 +61,8 @@ public class ReporteAlumnosjpaController extends JpaPadre {
                 + "   and  t.CodigoUniversitario LIKE ? "
                 + "    AND t.Anio = ? "
                 + "    AND t.Semestre = ? "
-                + "    AND t.CodigoDocente = ?";  // Agregado filtro por tutor
+                + "    AND t.CodigoDocente = ?"
+                + "    order by NombreAlumno,Ciclo,Codigo_Universitario";
 
         // Obtener el EntityManager de JPA
         EntityManager em = getEntityManager();

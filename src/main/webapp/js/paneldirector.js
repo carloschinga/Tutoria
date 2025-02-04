@@ -10,6 +10,9 @@ $(document).ready(function () {
      $("#mnulistaReporteAlumnos").click(function () {
         $("#cardDdetalle").load("reportealumnos.html");
     });
+    $("#mnulistaReporteAlumnossintutor").click(function () {
+        $("#cardDdetalle").load("reportealumnossintutor.html");
+    });
      $("#mnubusquedaportutor").click(function () {
         $("#cardDdetalle").load("busquedaportutor.html");
     });

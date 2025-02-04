@@ -59,12 +59,9 @@ $(document).ready(function () {
                 let semestre = $('<div>').text(value.Semestre).html();
                 semestres.append('<option value="' + value.CodigoSemestre + '">' + semestre + '</option>');
             });
+            seleccionarSemestreActual();
         } else {
-            if (data.mensaje === 'nopermiso') {
-                alert("Error: No tienes permiso para acceder aquí");
-            } else {
-                alert("Error general: No se pudo cargar los semestres.");
-            }
+            alert("Error al cargar los semestres.");
         }
     });
 
@@ -216,4 +213,18 @@ function saveFile(doc) {
     const fileName = `REPORTE_TUTORES.pdf`;
     doc.save(fileName);
 }
-
+function seleccionarSemestreActual() {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
+        if (data.resultado === "ok") {
+            let semestreActual = data.semestre.split(":")[1].trim();
+            $("#cmbSemestreAcademico option").each(function () {
+                if ($(this).text().trim() === semestreActual) {
+                    $(this).prop("selected", true);
+                    return false;
+                }
+            });
+        } else {
+            console.error("Error al obtener el semestre actual.");
+        }
+    });
+}

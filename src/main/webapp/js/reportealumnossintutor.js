@@ -3,7 +3,13 @@ function exportToPDF(data, params) {
     const doc = new jsPDF();
 
     addHeader(doc, params);
-    addTable(doc, data);
+
+    if (data.length === 0) {
+        doc.text("No hay datos disponibles para mostrar.", 20, 70);
+    } else {
+        addTable(doc, data);
+    }
+
     saveFile(doc);
 }
 
@@ -19,7 +25,7 @@ function addHeader(doc, params) {
     doc.text("Gestión de Alumnos", 20, 25);
 
     // Centro: Título del reporte
-    const title = "REPORTE DE ALUMNOS";
+    const title = "REPORTE DE ALUMNOS SIN TUTORÍA";
     const titleWidth = doc.getTextWidth(title);
     const centerX = (pageWidth - titleWidth) / 2;
     doc.setFontSize(11);
@@ -48,7 +54,9 @@ function addHeader(doc, params) {
     doc.text(`Año: ${params.codiAño}`, 20, 45);
     doc.text(`Semestre: ${params.codiSemestre}`, 20, 50);
 }
+
 $(document).ready(function () {
+    // Cargar las escuelas (el código de la escuela)
     $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
         if (data.resultado === "ok") {
             let escuelas = $('#cmbEscuelas');
@@ -68,22 +76,8 @@ $(document).ready(function () {
             }
         }
     });
-    $.getJSON("DocentesCRUD", {opcion: 1}, function (data) {
-        if (data.resultado === "ok") {
-            let Docentes = $('#cmbDocentes');
-            Docentes.html('<option value=""selected disabled>Selecciona un docente</option>');
-            listadocentes = data.data;
-            $.each(listadocentes, function (key, value) {
-                Docentes.append('<option value="' + value.CodigoDocente + '">' + value.Nombres + '</option>');
-            });
-        } else {
-            if (data.mensaje === 'nopermiso') {
-                alert("Error: No tienes permiso para acceder aqui");
-            } else {
-                alert("Error general: No se pudo cargar los docentes.");
-            }
-        }
-    });
+
+    // Cargar los semestres académicos
     $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
             let semestres = $('#cmbSemestreAcademico');
@@ -97,15 +91,16 @@ $(document).ready(function () {
             alert("Error al cargar los semestres.");
         }
     });
+
+    // Acción cuando se presiona el botón de imprimir
     $('#btnImprimir').click(function () {
         // Obtener los valores seleccionados
         let codiEscuela = $('#cmbEscuelas').val();
-        let codiDocente = $('#cmbDocentes').val(); // Código del docente seleccionado
         let Semestre = $('#cmbSemestreAcademico option:selected').text();
 
         // Validar que los datos estén completos
-        if (!codiEscuela || !Semestre || !codiDocente) {
-            alert("Por favor, selecciona una escuela, un semestre y un tutor.");
+        if (!codiEscuela || !Semestre) {
+            alert("Por favor, selecciona una escuela y un semestre.");
             return;
         }
 
@@ -139,30 +134,28 @@ $(document).ready(function () {
 
         // Realizar solicitud AJAX al servidor
         $.ajax({
-            url: "ReporteListaAlumnos",
+            url: "AlumnosSinTutor",
             method: "GET",
             dataType: "json",
             data: {
-                escuela: escuela,
                 codiEscuela: codiEscuela,
                 codiAño: codiAño,
-                codiSemestre: codiSemestre,
-                codigoTutor: codiDocente // Enviar el tutor seleccionado
+                codiSemestre: codiSemestre
             },
             beforeSend: function () {
                 console.log("Procesando solicitud para generar el reporte...");
             },
             success: function (data) {
-                console.log(data);
-
-                // Pasar los datos y los parámetros al generador de PDF
-                exportToPDF(data.lista, {
-                    escuela: escuela,
-                    codiEscuela: codiEscuela,
-                    codiAño: codiAño,
-                    codiSemestre: codiSemestre,
-                    codigoTutor: codiDocente
-                });
+                if (!data.lista || data.lista.length === 0) {
+                    alert("No se encontraron datos para el reporte.");
+                } else {
+                    exportToPDF(data.lista, {
+                        escuela: escuela,
+                        codiEscuela: codiEscuela,
+                        codiAño: codiAño,
+                        codiSemestre: codiSemestre
+                    });
+                }
             },
             error: function (xhr, status, error) {
                 console.error("Error al comunicarse con el servidor:", status, error);
@@ -174,19 +167,17 @@ $(document).ready(function () {
         });
     });
 });
-function configurePage(doc) {
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-}
+
+// Función para agregar la tabla
 function addTable(doc, data) {
     const headers = ["#", "Nombre", "Código Universitario", "Ciclo"];
 
     // Crear el cuerpo de la tabla con el contador
     const body = data.map((row, index) => [
             (index + 1).toString(), // Contador
-            row[0], // Nombre
-            row[2], // Código Docente
-            row[1]                  // Ciclo
+            row.nombres, // Nombres
+            row.codigoUniversitario, // Código Universitario
+            row.ciclo               // Ciclo
         ]);
 
     doc.autoTable({
@@ -205,7 +196,7 @@ function addTable(doc, data) {
         columnStyles: {
             0: {halign: 'center'}, // Centrado para el contador
             1: {halign: 'left'}, // Alineado a la izquierda para Nombre
-            2: {halign: 'center'}, // Centrado para Código Docente
+            2: {halign: 'center'}, // Centrado para Código Universitario
             3: {halign: 'center'}  // Centrado para Ciclo
         },
         margin: {
@@ -224,8 +215,10 @@ function addTable(doc, data) {
         }
     });
 }
+
+// Función para guardar el archivo PDF
 function saveFile(doc) {
-    const fileName = `REPORTE_ALUMNOS.pdf`;
+    const fileName = `REPORTE_ALUMNOS_SIN_TUTOR.pdf`;
     doc.save(fileName);
 }
 function seleccionarSemestreActual() {
