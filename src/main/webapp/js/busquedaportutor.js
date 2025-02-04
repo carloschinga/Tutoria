@@ -18,7 +18,7 @@ $(document).ready(function () {
     // Cargar semestres
     $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
-            console.log(data);
+            //console.log(data);
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
 
@@ -46,10 +46,9 @@ $(document).ready(function () {
     $('#buscarxtutor').on('click', function () {
         let nombreAlumno = $('#inputAlumno').val().trim();
         if (!nombreAlumno) {
-            //$.fn.mostrarPopup('');
-            $('#alerta').html("<b>Error:</b> Por favor, ingrese el nombre del alumno.");
+            // Mostramos alerta si el campo está vacío
+            $('#alerta').html("<b>Error:</b> Por favor, ingrese el nombre o apellido del alumno.");
             let alerta = $("#alerta");
-
             alerta.removeClass("d-none").hide().fadeIn(300); // Mostrar con fadeIn
 
             setTimeout(function () {
@@ -59,23 +58,54 @@ $(document).ready(function () {
             }, 3000);
             return;
         }
-        let codiSeme = $('#cmbSemestreAcademico').val();
 
+        let codiSeme = $('#cmbSemestreAcademico').val(); // Obtenemos el semestre seleccionado
 
-        let params = {nombre: nombreAlumno, codiSeme: codiSeme};
-        //let url = `BuscarTutor?nombre=${encodeURIComponent(nombreAlumno)}&codiSeme:`;
+        // Validación de semestre
+        if (!codiSeme) {
+            $('#alerta').html("<b>Error:</b> Por favor, seleccione un semestre.");
+            let alerta = $("#alerta");
+            alerta.removeClass("d-none").hide().fadeIn(300);
 
+            setTimeout(function () {
+                alerta.fadeOut(1000, function () {
+                    alerta.addClass("d-none");
+                });
+            }, 3000);
+            return;
+        }
+
+        let params = {nombre: nombreAlumno, codiSeme: codiSeme}; // Pasamos nombreCompleto como parámetro
+
+        // Realizamos la petición AJAX
         $.getJSON("BuscarTutor", params, function (data) {
-            // aqui poner la grilla
+            let tablaResultados = $('#tablaResultados');
+            let tbody = tablaResultados.find('tbody');
+            tbody.empty(); // Limpiamos la tabla
+
+            if (data.length > 0) {
+                $.each(data, function (index, tutor) {
+                    let fila = `<tr>
+                        <td>${tutor.Alumno}</td>
+                        <td>${tutor.Tutor}</td>
+                        <td>${tutor.Ciclo}</td>
+                    </tr>`;
+                    tbody.append(fila); // Añadimos los resultados en la tabla
+                });
+                tablaResultados.removeClass('d-none'); // Mostramos la tabla
+            } else {
+                $.fn.mostrarPopup("No se encontraron resultados.");
+                tablaResultados.addClass('d-none'); // Ocultamos la tabla si no hay resultados
+            }
         }).fail(function () {
             $.fn.mostrarPopup('<b>Error:</b> No se pudo conectar con el servidor. Intente nuevamente.');
         });
     });
 
     // Ejecutar búsqueda al presionar Enter
-    $('#inputAlumno').on('keydown', function (event) {
+    $('#inputNombreCompleto').on('keydown', function (event) {
         if (event.key === 'Enter') {
-            $('#buscarxtutor').trigger('click');
+            $('#buscarxtutor').trigger('click'); // Simulamos clic en el botón al presionar Enter
         }
     });
 });
