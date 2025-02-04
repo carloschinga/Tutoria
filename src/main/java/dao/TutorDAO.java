@@ -2,9 +2,7 @@ package dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.List;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class TutorDAO extends JpaPadre {
 
@@ -16,16 +14,18 @@ public class TutorDAO extends JpaPadre {
         return super.getEntityManager();
     }
 
-       public JSONArray obtenerTutoriaPorSemestre(int codigoSemestre, String nombreAlumno) {
-            EntityManager em = getEntityManager();
-        // Asegurar que nombreAlumno se use correctamente en LIKE
-        String nombreAlumnoLike = nombreAlumno + "%"; 
+    public JSONArray obtenerTutoriaPorSemestre(int codigoSemestre, String nombreAlumno, String prefijoApellido) {
+        EntityManager em = getEntityManager();
 
-        // Consulta SQL con `?` en lugar de `:parametro`
+        // Ajustar la búsqueda del nombre para que funcione con LIKE
+        String nombreAlumnoLike = "%" + nombreAlumno + "%";  
+        String apellidoLike = prefijoApellido + "%"; // Prefijo dinámico
+
+        // Consulta SQL corregida con parámetros dinámicos
         String sql = "WITH AlumnosConNombre AS ( " +
                      "    SELECT CodigoUniversitario, UPPER(CONCAT(Apellidos, ' ', Nombres)) AS Nombre " +
                      "    FROM Alumnos " +
-                     "    WHERE Apellidos LIKE 'DE LA%' " +
+                     "    WHERE Apellidos LIKE ? " +
                      ") " +
                      "SELECT " +
                      "    a.Nombre AS Alumno, " +
@@ -47,8 +47,9 @@ public class TutorDAO extends JpaPadre {
         Query query = em.createNativeQuery(sql);
 
         // Establecer los parámetros en orden
-        query.setParameter(1, codigoSemestre);
-        query.setParameter(2, nombreAlumnoLike);
+        query.setParameter(1, apellidoLike);
+        query.setParameter(2, codigoSemestre);
+        query.setParameter(3, nombreAlumnoLike);
 
         // Ejecutar la consulta y obtener el resultado JSON
         String jsonResult = (String) query.getSingleResult();
@@ -57,5 +58,3 @@ public class TutorDAO extends JpaPadre {
         return new JSONArray(jsonResult);
     }
 }
-
-
