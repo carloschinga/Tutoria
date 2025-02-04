@@ -40,7 +40,7 @@ public class RegistrarSession extends HttpServlet {
                 sesion.setAttribute("director", "ok");
             }
             sesion.setAttribute("docente", "ok");
-            sesion.setAttribute("codigoDocente", "1623");
+            sesion.setAttribute("codigoDocente", "1623"); //CHINGA RAMOS
             sesion.setAttribute("empr", "a");
             sesion.setAttribute("facultad", "03");
             out.print("{\"resultado\":\"ok\"}");
