@@ -18,16 +18,15 @@ $(document).ready(function () {
     // Cargar semestres
     $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
-            //console.log(data);
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
-
             $.each(data.semestres, function (key, value) {
                 let semestre = $('<div>').text(value.Semestre).html();
                 semestres.append('<option value="' + value.CodigoSemestre + '">' + semestre + '</option>');
             });
+            seleccionarSemestreActual();
         } else {
-            $.fn.manejarError(data.mensaje, "semestres");
+            alert("Error al cargar los semestres.");
         }
     });
 
@@ -109,3 +108,18 @@ $(document).ready(function () {
         }
     });
 });
+function seleccionarSemestreActual() {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
+        if (data.resultado === "ok") {
+            let semestreActual = data.semestre.split(":")[1].trim();
+            $("#cmbSemestreAcademico option").each(function () {
+                if ($(this).text().trim() === semestreActual) {
+                    $(this).prop("selected", true);
+                    return false;
+                }
+            });
+        } else {
+            console.error("Error al obtener el semestre actual.");
+        }
+    });
+}
