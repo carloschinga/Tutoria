@@ -3,7 +3,7 @@ $(document).ready(function () {
     let tabla;
     let asistencias = false;
 
-    $.getJSON("SemestreAcademicoCRUD", { opcion: 1 }, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
         } else {
@@ -15,7 +15,7 @@ $(document).ready(function () {
         }
     });
 
-    $.getJSON("ActividadTutoriaCRUD", { opcion: 2 }, function (data) {
+    $.getJSON("ActividadTutoriaCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
             let sesion = $('#sesion');
             sesion.empty().append('<option value="" selected disabled>Selecciona una sesión</option>');
@@ -61,7 +61,7 @@ $(document).ready(function () {
                     }
                 },
                 "columns": [
-                    { "data": "CodigoUniversitario" },
+                    {"data": "CodigoUniversitario"},
                     {
                         "data": "Nombres",
                         render: function (data, type, row, meta) {
@@ -82,15 +82,15 @@ $(document).ready(function () {
                                 dato = "Justificó";
                             }
                             let asistio = $('<div>')
-                                .addClass('Asistio')
-                                .text(dato)
-                                .prop('outerHTML');
+                                    .addClass('Asistio')
+                                    .text(dato)
+                                    .prop('outerHTML');
 
                             let select = $('<select>')
-                                .css('display', 'none')
-                                .addClass('asistencia-select')
-                                .attr('data-codigouniversitario', row.CodigoUniversitario)
-                                .attr('data-codigosede', row.CodigoSede);
+                                    .css('display', 'none')
+                                    .addClass('asistencia-select')
+                                    .attr('data-codigouniversitario', row.CodigoUniversitario)
+                                    .attr('data-codigosede', row.CodigoSede);
 
                             let options = {
                                 'N': '',
@@ -101,8 +101,8 @@ $(document).ready(function () {
 
                             $.each(options, function (key, value) {
                                 let option = $('<option>')
-                                    .val(key)
-                                    .text(value);
+                                        .val(key)
+                                        .text(value);
                                 select.append(option);
                                 if (key === String(data)) {
                                     option.attr('selected', 'selected');
@@ -120,12 +120,20 @@ $(document).ready(function () {
     };
 
     // Lógica para marcar todos los estudiantes como "Asistieron"
-    $("#marcar-todos").click(function () {
-        $(".asistencia-select").each(function () {
-            $(this).val('A'); // Marcar como "Asistió"
-            $(this).siblings(".Asistio").text("Asistió").show();
-        });
+    $("#marcar-todos").change(function () {
+        if ($(this).is(":checked")) {
+            $(".asistencia-select").each(function () {
+                $(this).val('A'); // Marcar como "Asistió"
+                $(this).siblings(".Asistio").show();
+            });
+        } else {
+            $(".asistencia-select").each(function () {
+                $(this).val('N'); // Desmarcar asistencia
+                $(this).siblings(".Asistio").text("").show();
+            });
+        }
     });
+
 
     $("#asignar").click(function () {
         if (asignar) {
@@ -133,12 +141,14 @@ $(document).ready(function () {
             $("#asignar").text("Asignar");
             $("#Grabar").css("display", 'none');
             $(".asistencia-select").css("display", 'none');
+            $("#div-todos").css("display", 'none');
             $(".Asistio").css("display", 'block');
         } else {
             asignar = true;
             $("#asignar").text("Cancelar");
             $(".asistencia-select").css("display", 'inline-block');
             $("#Grabar").css("display", 'inline-block');
+            $("#div-todos").css("display", 'inline-block');
             $(".Asistio").css("display", 'none');
         }
     });
