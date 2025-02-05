@@ -30,7 +30,8 @@ public class TutorDAO extends JpaPadre {
                      "SELECT " +
                      "    a.Nombre AS Alumno, " +
                      "    UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Tutor, " +
-                     "    m.Ciclo AS Ciclo " +
+                     "    m.Ciclo AS Ciclo, " +
+                     "    e.Escuela as Escuela " +
                      "FROM " +
                      "    Tutoria t " +
                      "INNER JOIN Docente d ON d.CodigoDocente = t.CodigoDocente " +
