@@ -52,6 +52,11 @@ public class DocentesCRUD extends HttpServlet {
                                 out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
                             }
                             break;
+                        case "2":
+                            String codigoDocente=session.getAttribute("codigoDocente").toString();
+                            String nombreDocente=dao.Buscarxcodigo(codigoDocente);
+                            out.print("{\"resultado\":\"ok\",\"nombre\":\""+nombreDocente+"\"}");
+                            break;
                         default:
                             out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");
                     }

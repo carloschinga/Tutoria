@@ -6,10 +6,8 @@ package dao;
 
 import dao.exceptions.NonexistentEntityException;
 import dto.SemestreAcademico;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
@@ -57,6 +55,10 @@ public class SemestreAcademicoJpaController extends JpaPadre {
             }
         }
     }
+    public static void main(String[] args) {
+        
+    }
+ 
 
     public SemestreAcademico getSemestreAcademicoActual() {
         EntityManager em = getEntityManager();
@@ -199,13 +201,5 @@ public class SemestreAcademicoJpaController extends JpaPadre {
         }
     }
 
-    public static void main(String[] args) {
-        SemestreAcademicoJpaController saDAO = new SemestreAcademicoJpaController("a");
-        String resultado = saDAO.listarSemestres();
-        System.out.println(resultado);
-        //SemestreAcademicoJpaController saDAO = new SemestreAcademicoJpaController("a");
-        //SemestreAcademico sa = new SemestreAcademico();
-        // sa = saDAO.getSemestreAcademicoActual();
-        //System.out.println(sa.getAnio() + "-" + sa.getSemestre());
-    }
+   
 }

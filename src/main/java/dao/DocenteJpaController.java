@@ -6,10 +6,8 @@ package dao;
 
 import dao.exceptions.NonexistentEntityException;
 import dto.Docente;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
@@ -25,6 +23,33 @@ public class DocenteJpaController extends JpaPadre {
 
     public DocenteJpaController(String empresa) {
         super(empresa);
+    }
+
+    public String Buscarxcodigo(String codigoDocente) {
+        EntityManager em = getEntityManager();
+        try {
+            StringBuilder queryString = new StringBuilder();
+            queryString.append("SELECT d.CodigoDocente, (s.APaterno + ' ' + s.AMaterno + ' ' + s.Nombre1 + ' ' + COALESCE(s.Nombre2, '')) AS nombrecompleto ");
+            queryString.append("FROM Docente d ");
+            queryString.append("INNER JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto ");
+            queryString.append("WHERE d.Estado = 1 AND d.CodigoDocente = ? ");
+
+            Query query = em.createNativeQuery(queryString.toString());
+            query.setParameter(1, codigoDocente);
+            Object[] resultado = (Object[]) query.getSingleResult();
+
+            /*Object[] resultado = (Object[]) query.getSingleResult();
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("CodigoDocente", resultado[0]);
+            jsonObj.put("Nombres", resultado[1]);*/
+            return resultado[1].toString();
+        } catch (Exception e) {
+            return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
     public String BuscarFacultad(String codigoFacultad) {
