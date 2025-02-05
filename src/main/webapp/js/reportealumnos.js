@@ -2,8 +2,18 @@ function exportToPDF(data, params) {
     const {jsPDF} = window.jspdf;
     const doc = new jsPDF();
 
+    // Añadir la cabecera
     addHeader(doc, params);
-    addTable(doc, data);
+
+    // Verificar si hay datos para mostrar
+    if (data.length === 0) {
+        doc.text("No hay datos disponibles para mostrar.", 20, 70);
+    } else {
+        // Añadir la tabla
+        addTable(doc, data, params);
+    }
+
+    // Guardar el archivo PDF
     saveFile(doc);
 }
 
@@ -47,6 +57,7 @@ function addHeader(doc, params) {
     doc.text(`Código Escuela: ${params.codiEscuela}`, 20, 40);
     doc.text(`Año: ${params.codiAño}`, 20, 45);
     doc.text(`Semestre: ${params.codiSemestre}`, 20, 50);
+    doc.text(`Tutor: ${params.codiDocente}`, 20, 55);
 }
 $(document).ready(function () {
     $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
@@ -178,7 +189,7 @@ function configurePage(doc) {
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
 }
-function addTable(doc, data) {
+function addTable(doc, data, params) {
     const headers = ["#", "Nombre", "Código Universitario", "Ciclo"];
 
     // Crear el cuerpo de la tabla con el contador
@@ -188,11 +199,13 @@ function addTable(doc, data) {
             row[2], // Código Docente
             row[1]                  // Ciclo
         ]);
+    const firstPageStartY = 55; // Posición de la tabla en la primera página
+    let currentY = firstPageStartY; // Variable para controlar la posición vertical de la tabla
 
     doc.autoTable({
         head: [headers],
         body: body,
-        startY: 55,
+        startY: currentY,
         headStyles: {
             fillColor: [0, 68, 136], // Azul oscuro (RGB)
             textColor: 255, // Texto blanco
@@ -205,27 +218,25 @@ function addTable(doc, data) {
         columnStyles: {
             0: {halign: 'center'}, // Centrado para el contador
             1: {halign: 'left'}, // Alineado a la izquierda para Nombre
-            2: {halign: 'center'}, // Centrado para Código Docente
+            2: {halign: 'center'}, // Centrado para Código Universitario
             3: {halign: 'center'}  // Centrado para Ciclo
         },
         margin: {
-            top: 90,
+            top: 55,
             right: 20,
             bottom: 30,
             left: 20
         },
-        drawCell: function (data) {
-            // Dibujar líneas solo para las celdas del encabezado
-            if (data.section === 'head') {
-                doc.setDrawColor(0, 0, 0); // Color negro para las líneas divisorias
-                doc.setLineWidth(0.5);     // Grosor de las líneas
-                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height); // Rectángulo de la celda
-            }
+        // Manejo de salto de página
+        pageBreak: 'auto', // Permite dividir la tabla en varias páginas si es necesario
+        didDrawPage: function (data) {
+            // Redibujar la cabecera en cada página
+            addHeader(doc, params);
         }
     });
 }
 function saveFile(doc) {
-    const fileName = `REPORTE_ALUMNOS.pdf`;
+    const fileName = `REPORTE_ALUMNOS_SIN_TUTOR.pdf`;
     doc.save(fileName);
 }
 function seleccionarSemestreActual() {
