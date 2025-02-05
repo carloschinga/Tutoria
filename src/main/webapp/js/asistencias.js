@@ -3,7 +3,7 @@ $(document).ready(function () {
     let tabla;
     let asistencias = false;
 
-    $.getJSON("SemestreAcademicoCRUD", function (data) {
+    $.getJSON("SemestreAcademicoCRUD",{opcion:1}, function (data) {
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
             console.log(data.semestre);
@@ -11,11 +11,10 @@ $(document).ready(function () {
             if (data.mensaje === 'nopermiso') {
                 alert("Error: No tienes permiso para acceder aqui");
             } else {
-                alert("Error general: No se pudo cargar las escuelas.");
+                alert("Error general: No se pudo cargar los semestres academicos.");
             }
         }
-
-    })
+    });
     $.getJSON("ActividadTutoriaCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
             let sesion = $('#sesion');
