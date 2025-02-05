@@ -1,15 +1,19 @@
 function exportToPDF(data, params) {
-    const {jsPDF} = window.jspdf;
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
+    // Añadir la cabecera
     addHeader(doc, params);
 
+    // Verificar si hay datos para mostrar
     if (data.length === 0) {
         doc.text("No hay datos disponibles para mostrar.", 20, 70);
     } else {
-        addTable(doc, data);
+        // Añadir la tabla
+        addTable(doc, data, params);
     }
 
+    // Guardar el archivo PDF
     saveFile(doc);
 }
 
@@ -35,12 +39,12 @@ function addHeader(doc, params) {
     // Lado derecho: Fecha y hora
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}/${(currentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}/${currentDate.getFullYear()}`;
+        .toString()
+        .padStart(2, "0")}/${currentDate.getFullYear()}`;
     const formattedTime = `${currentDate.getHours()}:${currentDate
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
@@ -55,9 +59,63 @@ function addHeader(doc, params) {
     doc.text(`Semestre: ${params.codiSemestre}`, 20, 50);
 }
 
+function addTable(doc, data, params) {
+    const headers = ["#", "Nombre", "Código Universitario", "Ciclo"];
+
+    // Crear el cuerpo de la tabla con el contador
+    const body = data.map((row, index) => [
+        (index + 1).toString(), // Contador
+        row.nombres,            // Nombres
+        row.codigoUniversitario, // Código Universitario
+        row.ciclo                // Ciclo
+    ]);
+
+    const firstPageStartY = 55; // Posición de la tabla en la primera página
+    let currentY = firstPageStartY; // Variable para controlar la posición vertical de la tabla
+
+    doc.autoTable({
+        head: [headers],
+        body: body,
+        startY: currentY,
+        headStyles: {
+            fillColor: [0, 68, 136], // Azul oscuro (RGB)
+            textColor: 255, // Texto blanco
+            fontSize: 12,
+            halign: "center"         // Centrar texto
+        },
+        bodyStyles: {
+            fontSize: 10
+        },
+        columnStyles: {
+            0: { halign: 'center' }, // Centrado para el contador
+            1: { halign: 'left' }, // Alineado a la izquierda para Nombre
+            2: { halign: 'center' }, // Centrado para Código Universitario
+            3: { halign: 'center' }  // Centrado para Ciclo
+        },
+        margin: {
+            top: 55,
+            right: 20,
+            bottom: 30,
+            left: 20
+        },
+        // Manejo de salto de página
+        pageBreak: 'auto',  // Permite dividir la tabla en varias páginas si es necesario
+        didDrawPage: function (data) {
+            // Redibujar la cabecera en cada página
+            addHeader(doc, params);
+        }
+    });
+}
+
+// Función para guardar el archivo PDF
+function saveFile(doc) {
+    const fileName = `REPORTE_ALUMNOS_SIN_TUTOR.pdf`;
+    doc.save(fileName);
+}
+
 $(document).ready(function () {
     // Cargar las escuelas (el código de la escuela)
-    $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
+    $.getJSON("EscuelasCRUD", { opcion: 1 }, function (data) {
         if (data.resultado === "ok") {
             let escuelas = $('#cmbEscuelas');
             escuelas.empty().append('<option value="" selected disabled>Selecciona una escuela</option>');
@@ -67,7 +125,6 @@ $(document).ready(function () {
                 let escuela = $('<div>').text(value.escuela).html();
                 escuelas.append('<option value="' + codigoEscuela + '">' + escuela + '</option>');
             });
-
         } else {
             if (data.mensaje === 'nopermiso') {
                 alert("Error: No tienes permiso para acceder aqui");
@@ -78,7 +135,7 @@ $(document).ready(function () {
     });
 
     // Cargar los semestres académicos
-    $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", { opcion: 2 }, function (data) {
         if (data.resultado === "ok") {
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
@@ -117,19 +174,19 @@ $(document).ready(function () {
 
         // Mostrar mensaje de carga mientras se procesa la solicitud
         const loadingMessage = $("<div>")
-                .attr("id", "loadingMessage")
-                .css({
-                    position: "fixed",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    background: "#fff",
-                    padding: "10px 20px",
-                    borderRadius: "5px",
-                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-                    zIndex: 1000
-                })
-                .text("Generando reporte, por favor espera...");
+            .attr("id", "loadingMessage")
+            .css({
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                background: "#fff",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+                zIndex: 1000
+            })
+            .text("Generando reporte, por favor espera...");
         $('body').append(loadingMessage);
 
         // Realizar solicitud AJAX al servidor
@@ -168,61 +225,8 @@ $(document).ready(function () {
     });
 });
 
-// Función para agregar la tabla
-function addTable(doc, data) {
-    const headers = ["#", "Nombre", "Código Universitario", "Ciclo"];
-
-    // Crear el cuerpo de la tabla con el contador
-    const body = data.map((row, index) => [
-            (index + 1).toString(), // Contador
-            row.nombres, // Nombres
-            row.codigoUniversitario, // Código Universitario
-            row.ciclo               // Ciclo
-        ]);
-
-    doc.autoTable({
-        head: [headers],
-        body: body,
-        startY: 55,
-        headStyles: {
-            fillColor: [0, 68, 136], // Azul oscuro (RGB)
-            textColor: 255, // Texto blanco
-            fontSize: 12,
-            halign: "center"         // Centrar texto
-        },
-        bodyStyles: {
-            fontSize: 10
-        },
-        columnStyles: {
-            0: {halign: 'center'}, // Centrado para el contador
-            1: {halign: 'left'}, // Alineado a la izquierda para Nombre
-            2: {halign: 'center'}, // Centrado para Código Universitario
-            3: {halign: 'center'}  // Centrado para Ciclo
-        },
-        margin: {
-            top: 90,
-            right: 20,
-            bottom: 30,
-            left: 20
-        },
-        drawCell: function (data) {
-            // Dibujar líneas solo para las celdas del encabezado
-            if (data.section === 'head') {
-                doc.setDrawColor(0, 0, 0); // Color negro para las líneas divisorias
-                doc.setLineWidth(0.5);     // Grosor de las líneas
-                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height); // Rectángulo de la celda
-            }
-        }
-    });
-}
-
-// Función para guardar el archivo PDF
-function saveFile(doc) {
-    const fileName = `REPORTE_ALUMNOS_SIN_TUTOR.pdf`;
-    doc.save(fileName);
-}
 function seleccionarSemestreActual() {
-    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", { opcion: 1 }, function (data) {
         if (data.resultado === "ok") {
             let semestreActual = data.semestre.split(":")[1].trim();
             $("#cmbSemestreAcademico option").each(function () {
