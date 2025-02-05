@@ -13,6 +13,9 @@ $(document).ready(function () {
     $("#mnuReporteActividades").click(function () {
         $("#cardDdetalle").load("ReporteActividades.html");
     });
+     $("#mnulistaReporteAsistencias").click(function () {
+        $("#cardDdetalle").load("reporteasistencias.html");
+    });
    
    
 });
