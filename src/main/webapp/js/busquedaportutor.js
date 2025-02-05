@@ -88,6 +88,7 @@ $(document).ready(function () {
                         <td>${tutor.Alumno}</td>
                         <td>${tutor.Tutor}</td>
                         <td>${tutor.Ciclo}</td>
+                        <td>${tutor.Escuela}</td>
                     </tr>`;
                     tbody.append(fila); // Añadimos los resultados en la tabla
                 });
