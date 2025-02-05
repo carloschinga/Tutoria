@@ -1,7 +1,7 @@
 $(document).ready(function () {
     let tabla;
 
-    $.getJSON("SemestreAcademicoCRUD", function (data) {
+    $.getJSON("SemestreAcademicoCRUD",{opcion:1}, function (data) {
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
             console.log(data.semestre);
@@ -13,7 +13,7 @@ $(document).ready(function () {
             }
         }
 
-    })
+    });
     $.getJSON("TutoriaCRUD", {opcion: 3}, function (data) {
         if (data.resultado === "ok") {
             let alumno = $('#alumno');
