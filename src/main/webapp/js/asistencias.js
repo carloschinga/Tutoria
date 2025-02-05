@@ -3,22 +3,22 @@ $(document).ready(function () {
     let tabla;
     let asistencias = false;
 
-    $.getJSON("SemestreAcademicoCRUD",{opcion:1}, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", { opcion: 1 }, function (data) {
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
-            console.log(data.semestre);
         } else {
             if (data.mensaje === 'nopermiso') {
-                alert("Error: No tienes permiso para acceder aqui");
+                alert("Error: No tienes permiso para acceder aquí");
             } else {
-                alert("Error general: No se pudo cargar los semestres academicos.");
+                alert("Error general: No se pudo cargar los semestres académicos.");
             }
         }
     });
-    $.getJSON("ActividadTutoriaCRUD", {opcion: 2}, function (data) {
+
+    $.getJSON("ActividadTutoriaCRUD", { opcion: 2 }, function (data) {
         if (data.resultado === "ok") {
             let sesion = $('#sesion');
-            sesion.empty().append('<option value="" selected disabled>Selecciona una sesion</option>');
+            sesion.empty().append('<option value="" selected disabled>Selecciona una sesión</option>');
 
             $.each(data.data, function (key, value) {
                 let sesiontext = $('<div>').text(value.sesion).html();
@@ -27,12 +27,13 @@ $(document).ready(function () {
             });
         } else {
             if (data.mensaje === 'nopermiso') {
-                alert("Error: No tienes permiso para acceder aqui");
+                alert("Error: No tienes permiso para acceder aquí");
             } else {
-                alert("Error general: No se pudo cargar las escuelas.");
+                alert("Error general: No se pudo cargar las actividades.");
             }
         }
     });
+
     $.fn.listar = function () {
         if ($('#sesion').val() !== null && $('#sesion').val() !== undefined && $('#sesion').val() !== "") {
             asignar = false;
@@ -47,25 +48,23 @@ $(document).ready(function () {
                 "ajax": {
                     "url": "AsistenciaTutoriaCRUD",
                     "data": function (d) {
-                        d.opcion = 4
-                                , d.sesion = $('#sesion').val();
+                        d.opcion = 4;
+                        d.sesion = $('#sesion').val();
                     },
                     "dataSrc": function (json) {
-                        // Verificar si la respuesta contiene "OK"
                         if (json.resultado === "ok") {
                             return json.data;
                         } else {
                             alert('Error: ' + json.mensaje);
-                            return []; // Retorna un array vacío si no es "OK"
+                            return [];
                         }
                     }
                 },
                 "columns": [
-                    {"data": "CodigoUniversitario"},
+                    { "data": "CodigoUniversitario" },
                     {
                         "data": "Nombres",
                         render: function (data, type, row, meta) {
-                            // Escapar datos antes de usarlos
                             let nombres = $('<div>').text(data).html();
                             let apellidos = $('<div>').text(row.Apellidos).html();
                             return apellidos + " " + nombres;
@@ -83,15 +82,15 @@ $(document).ready(function () {
                                 dato = "Justificó";
                             }
                             let asistio = $('<div>')
-                                    .addClass('Asistio')
-                                    .text(dato)
-                                    .prop('outerHTML');
+                                .addClass('Asistio')
+                                .text(dato)
+                                .prop('outerHTML');
 
                             let select = $('<select>')
-                                    .css('display', 'none')
-                                    .addClass('asistencia-select')
-                                    .attr('data-codigouniversitario', row.CodigoUniversitario)
-                                    .attr('data-codigosede', row.CodigoSede);
+                                .css('display', 'none')
+                                .addClass('asistencia-select')
+                                .attr('data-codigouniversitario', row.CodigoUniversitario)
+                                .attr('data-codigosede', row.CodigoSede);
 
                             let options = {
                                 'N': '',
@@ -102,29 +101,31 @@ $(document).ready(function () {
 
                             $.each(options, function (key, value) {
                                 let option = $('<option>')
-                                        .val(key)
-                                        .text(value);
+                                    .val(key)
+                                    .text(value);
                                 select.append(option);
                                 if (key === String(data)) {
-                                    option.attr('selected', 'selected'); // Añadir el atributo selected explícitamente
+                                    option.attr('selected', 'selected');
                                 }
                             });
 
-                            // Aplicar el valor y depurar el resultado
                             select.val(String(data));
-                            console.log('Valor seleccionado:', select.val(), 'esperado:', String(data));
                             let container = $('<div>').append(select).append(asistio);
-                            console.log(container.html());
-
-                            // Retornar el HTML del contenedor
                             return container.html();
                         }
-
                     }
                 ]
             });
         }
     };
+
+    // Lógica para marcar todos los estudiantes como "Asistieron"
+    $("#marcar-todos").click(function () {
+        $(".asistencia-select").each(function () {
+            $(this).val('A'); // Marcar como "Asistió"
+            $(this).siblings(".Asistio").text("Asistió").show();
+        });
+    });
 
     $("#asignar").click(function () {
         if (asignar) {
@@ -141,6 +142,7 @@ $(document).ready(function () {
             $(".Asistio").css("display", 'none');
         }
     });
+
     $('#sesion').change(function () {
         asignar = false;
         $("#asignar").text("Asignar");
@@ -149,18 +151,16 @@ $(document).ready(function () {
         $(".Asistio").css("display", 'block');
         $.fn.listar();
     });
+
     $("#Grabar").click(function () {
         let datos = [];
         const Docente = $("#Docentes").val();
 
-        // Seleccionar todos los select con la clase .asistencia-select que estén visibles
         $('.asistencia-select').each(function () {
-            // Obtener los valores de data-codigouniversitario y data-codigosede
             const coduniv = $(this).data('codigouniversitario');
             const codsede = $(this).data('codigosede');
-            const asistencia = $(this).val(); // Valor seleccionado en el select
+            const asistencia = $(this).val();
 
-            // Agregar los datos al array
             datos.push({
                 coduniv: coduniv,
                 codsede: codsede,
@@ -169,7 +169,6 @@ $(document).ready(function () {
         });
 
         if (datos.length > 0) {
-            console.log(datos);
             $.ajax({
                 url: "AsistenciaTutoriaCRUD?opcion=5&sesion=" + $('#sesion').val(),
                 type: "POST",
@@ -192,7 +191,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr, status, error) {
-                    alert("Error con la conexion con el servidor");
+                    alert("Error con la conexión con el servidor");
                 }
             });
         } else {

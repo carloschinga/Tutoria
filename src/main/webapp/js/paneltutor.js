@@ -10,6 +10,9 @@ $(document).ready(function () {
     $("#mnuIncidencias").click(function () {
         $("#cardDdetalle").load("incidencias.html");
     });
+    $("#mnuReporteActividades").click(function () {
+        $("#cardDdetalle").load("ReporteActividades.html");
+    });
    
    
 });

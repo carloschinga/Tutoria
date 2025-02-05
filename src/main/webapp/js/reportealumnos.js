@@ -26,7 +26,8 @@ function addHeader(doc, params) {
     doc.text("UNJFSC", 20, 20); // Nombre de la institución
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Gestión de Alumnos", 20, 25);
+    doc.text(`Tutor: ${params.nombreTutor}`, 20, 55);
+
 
     // Centro: Título del reporte
     const title = "REPORTE DE ALUMNOS";
@@ -57,7 +58,7 @@ function addHeader(doc, params) {
     doc.text(`Código Escuela: ${params.codiEscuela}`, 20, 40);
     doc.text(`Año: ${params.codiAño}`, 20, 45);
     doc.text(`Semestre: ${params.codiSemestre}`, 20, 50);
-    doc.text(`Tutor: ${params.codiDocente}`, 20, 55);
+    doc.text(`Tutor: ${params.nombreTutor}`, 20, 55);
 }
 $(document).ready(function () {
     $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
@@ -112,6 +113,7 @@ $(document).ready(function () {
         // Obtener los valores seleccionados
         let codiEscuela = $('#cmbEscuelas').val();
         let codiDocente = $('#cmbDocentes').val(); // Código del docente seleccionado
+        let nombreDocente = $('#cmbDocentes option:selected').text();
         let Semestre = $('#cmbSemestreAcademico option:selected').text();
 
         // Validar que los datos estén completos
@@ -158,7 +160,8 @@ $(document).ready(function () {
                 codiEscuela: codiEscuela,
                 codiAño: codiAño,
                 codiSemestre: codiSemestre,
-                codigoTutor: codiDocente // Enviar el tutor seleccionado
+                codigoTutor: codiDocente, // Enviar el tutor seleccionado
+                nombreTutor: nombreDocente
             },
             beforeSend: function () {
                 console.log("Procesando solicitud para generar el reporte...");
@@ -172,7 +175,8 @@ $(document).ready(function () {
                     codiEscuela: codiEscuela,
                     codiAño: codiAño,
                     codiSemestre: codiSemestre,
-                    codigoTutor: codiDocente
+                    codigoTutor: codiDocente, // Código del docente
+                    nombreTutor: nombreDocente // Nombre del docente
                 });
             },
             error: function (xhr, status, error) {
@@ -199,7 +203,7 @@ function addTable(doc, data, params) {
             row[2], // Código Docente
             row[1]                  // Ciclo
         ]);
-    const firstPageStartY = 55; // Posición de la tabla en la primera página
+    const firstPageStartY = 65; // Posición de la tabla en la primera página
     let currentY = firstPageStartY; // Variable para controlar la posición vertical de la tabla
 
     doc.autoTable({
@@ -222,7 +226,7 @@ function addTable(doc, data, params) {
             3: {halign: 'center'}  // Centrado para Ciclo
         },
         margin: {
-            top: 55,
+            top: 75,
             right: 20,
             bottom: 30,
             left: 20
