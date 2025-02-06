@@ -24,6 +24,9 @@ $(document).ready(function () {
     $("#mnulistaReporteAsistencias").click(function () {
         $("#cardDdetalle").load("reporteasistencias.html");
     });
+    $("#mnulistaReporteincidencias").click(function () {
+        $("#cardDdetalle").load("reporteincidencias.html");
+    });
 
 
 });
