@@ -4,10 +4,13 @@
  */
 package servlet;
 
-import dao.SemestreAcademicoJpaController;
-import dto.SemestreAcademico;
+import com.google.gson.Gson;
+import dao.ReporteAsistencias;
+import dto.ReporteActividad;
+import dto.ReporteAsistenciaTutoria;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,8 +22,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author san21
  */
-@WebServlet(name = "SemestreAcademicoCRUD", urlPatterns = {"/SemestreAcademicoCRUD"})
-public class SemestreAcademicoCRUD extends HttpServlet {
+@WebServlet(name = "ReporteAsistenciasTutoria", urlPatterns = {"/ReporteAsistenciasTutoria"})
+public class ReporteAsistenciasTutoria extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,36 +37,7 @@ public class SemestreAcademicoCRUD extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            try {
-                HttpSession session = request.getSession(true);
-                Object emprObj = session.getAttribute("empr");
-                if (emprObj != null) {
-                    String opcion = request.getParameter("opcion");
-                    String empr = emprObj.toString();
-                    switch (opcion) {
-                        case "1":
-                            SemestreAcademicoJpaController saDAO = new SemestreAcademicoJpaController(empr);
-                            SemestreAcademico sa = new SemestreAcademico();
-                            sa = saDAO.getSemestreAcademicoActual();
-                            out.print("{\"resultado\":\"ok\",\"semestre\":\"Semestre Academico:" + sa.getAnio() + "-" + sa.getSemestre() + "\"}");
-                            break;
-                        case "2":
-                            saDAO = new SemestreAcademicoJpaController(empr);
-                            out.print("{\"semestres\":" + saDAO.listarSemestres() + ",\"resultado\":\"ok\"}");
-
-                            break;
-                        default:
-                            throw new AssertionError();
-                    }
-
-                } else {
-                    out.print("{\"resultado\":\"error\",\"mensaje\":\"nosession\"}");
-                }
-            } catch (Exception e) {
-                out.print("{\"resultado\":\"error\",\"mensaje\":\"Error general\"}");
-            }
-        }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -78,7 +52,46 @@ public class SemestreAcademicoCRUD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        try {
+            HttpSession session = request.getSession(true);
+            if (session == null || session.getAttribute("empr") == null) {
+                response.getWriter().write("{\"resultado\":\"ERROR\", \"message\":\"No estás autenticado. Inicia sesión.\"}");
+                return;
+            }
+
+            // Obtener los parámetros de la solicitud
+            String codiAño = request.getParameter("anio");
+            String codiSemestre = request.getParameter("semestre");
+            String sesion = request.getParameter("sesion");
+            String codiDoce= session.getAttribute("codigoDocente").toString();
+
+            // Validar los parámetros
+            if (codiAño == null || codiSemestre == null || sesion == null) {
+                response.getWriter().write("{\"resultado\":\"ERROR\", \"message\":\"Faltan parámetros para generar el reporte.\"}");
+                return;
+            }
+
+            // Obtener la base de datos desde la sesión
+            String empr = (String) session.getAttribute("empr");
+            if (empr == null) {
+                response.getWriter().write("{\"resultado\":\"ERROR\", \"message\":\"No se ha especificado con qué BD trabajar.\"}");
+                return;
+            }
+
+            // Instanciar el DAO y obtener datos
+            ReporteAsistencias reporteasistenciasdDAO = new ReporteAsistencias(empr);
+            List<ReporteAsistenciaTutoria> listaReportes = reporteasistenciasdDAO.obtenerAsistenciaPorDocente(codiDoce,codiAño,codiSemestre,sesion);
+
+            
+
+            // Enviar respuesta en formato JSON
+            out.println("{\"resultado\":\"OK\", \"lista\":" + new Gson().toJson(listaReportes) + "}");
+        } catch (IOException e) {
+            out.println("{\"resultado\":\"ERROR\", \"message\":\"" + e.getMessage() + "\"}");
+        }
+
     }
 
     /**

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Cargar los semestres
-    $.getJSON("SemestreAcademicoCRUD", { opcion: 2 }, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
@@ -9,16 +9,26 @@ $(document).ready(function () {
                 semestres.append('<option value="' + value.CodigoSemestre + '">' + semestre + '</option>');
             });
             seleccionarSemestreActual();
+
         } else {
             alert("Error al cargar los semestres.");
+        }
+    });
+    $('#cmbSemestreAcademico').change(function() {
+        var semestreSeleccionado = $(this).val();  // Obtiene el valor seleccionado
+        if (semestreSeleccionado) {
+            cargarSesion(semestreSeleccionado);
+        } else {
+            console.log('No se ha seleccionado ningún semestre');
         }
     });
 
     $('#btnImprimir').click(function () {
         // Obtener el valor del semestre seleccionado
         let semestreSeleccionado = $('#cmbSemestreAcademico').val();
+        let sesion = $('#cmbSesion').val();
 
-        if (!semestreSeleccionado) {
+        if (!semestreSeleccionado || !sesion) {
             alert("Por favor, selecciona un semestre.");
             return;
         }
@@ -36,29 +46,30 @@ $(document).ready(function () {
 
         // Mostrar mensaje de carga mientras se procesa la solicitud
         const loadingMessage = $("<div>")
-            .attr("id", "loadingMessage")
-            .css({
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                background: "#fff",
-                padding: "10px 20px",
-                borderRadius: "5px",
-                boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-                zIndex: 1000
-            })
-            .text("Generando reporte, por favor espera...");
+                .attr("id", "loadingMessage")
+                .css({
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    background: "#fff",
+                    padding: "10px 20px",
+                    borderRadius: "5px",
+                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+                    zIndex: 1000
+                })
+                .text("Generando reporte, por favor espera...");
         $('body').append(loadingMessage);
 
         // Realizar solicitud AJAX al servlet ReporteActividad
         $.ajax({
-            url: "ReporteActividad", // Usamos el servlet que generará el reporte
+            url: "ReporteAsistenciasTutoria", // Usamos el servlet que generará el reporte
             method: "GET",
             dataType: "json",
             data: {
                 anio: codiAño,
-                semestre: codiSemestre
+                semestre: codiSemestre,
+                sesion: sesion
             },
             success: function (data) {
                 console.log("Respuesta del servidor:", data);
@@ -66,10 +77,11 @@ $(document).ready(function () {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,
-                        semestre: codiSemestre
+                        semestre: codiSemestre,
+                        sesion: sesion
                     });
                 } else {
-                    alert("No se encontraron actividades para este semestre.");
+                    alert("No existe datos.");
                 }
             },
             error: function (xhr, status, error) {
@@ -83,8 +95,45 @@ $(document).ready(function () {
     });
 });
 
+
+function cargarSesion(codiSeme) {
+
+    $.getJSON("SesionCRUD", {opcion: 1, semestre: codiSeme}, function (data) {
+        try {
+            let sesionSelect = $('#cmbSesion');
+            sesionSelect.empty().append('<option value="" selected disabled>Selecciona una Sesión</option>');
+
+            // Iteramos las sesiones que vienen en formato JSON
+            $.each(data, function (index, sesionObj) {
+                // let sesion = $('<div>').text(sesionObj.Sesion).html();
+                sesionSelect.append('<option value="' + sesionObj.Sesion + '">' + sesionObj.Actividad + '</option>');
+            });
+        } catch (error) {
+            console.error("Error procesando la respuesta:", error);
+            alert("Error al cargar las sesiones.");
+        }
+    }).fail(function () {
+        alert("Error al conectar con el servidor.");
+    });
+}
+
+function seleccionarSemestreActual() {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
+        if (data.resultado === "ok") {
+            let semestreActual = data.semestre.split(":")[1].trim();
+            $("#cmbSemestreAcademico option").each(function () {
+                if ($(this).text().trim() === semestreActual) {
+                    $(this).prop("selected", true);
+                    cargarSesion($('#cmbSemestreAcademico').val());
+                    return;
+                }
+            });
+        }
+    });
+}
+
 function exportToPDF(data, params) {
-    const { jsPDF } = window.jspdf;
+    const {jsPDF} = window.jspdf;
     const doc = new jsPDF();
 
     // Añadir la cabecera
@@ -109,9 +158,9 @@ function addHeader(doc, params) {
     doc.text("UNJFSC", 20, 20);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Gestión de Actividades", 20, 25);
+    doc.text("Gestión de Asistencias", 20, 25);
 
-    const title = "REPORTE DE ACTIVIDADES";
+    const title = "REPORTE DE Asistencias";
     const titleWidth = doc.getTextWidth(title);
     const centerX = (pageWidth - titleWidth) / 2;
     doc.setFontSize(11);
@@ -133,12 +182,14 @@ function addHeader(doc, params) {
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "Actividad", "Lugar"];
+    const headers = ["#", "Nombre", "Codigo_Universitario", "Asistencia", "Tutor"];
     const body = data.map((row, index) => [
-        (index + 1).toString(),
-        row.actividad,  // Actividad
-        row.lugar       // Lugar
-    ]);
+            (index + 1).toString(),
+            row.NombreAlumno,
+            row.CodigoUniversitario,
+            row.Asistencia,
+            row.Tutor
+        ]);
 
     const firstPageStartY = 55;
     let currentY = firstPageStartY;
@@ -170,20 +221,6 @@ function addTable(doc, data, params) {
 }
 
 function saveFile(doc) {
-    const fileName = `REPORTE_ACTIVIDADES_${new Date().toISOString()}.pdf`;
+    const fileName = `REPORTE_ASISTENCIAS_${new Date().toISOString()}.pdf`;
     doc.save(fileName);
-}
-
-function seleccionarSemestreActual() {
-    $.getJSON("SemestreAcademicoCRUD", { opcion: 1 }, function (data) {
-        if (data.resultado === "ok") {
-            let semestreActual = data.semestre.split(":")[1].trim();
-            $("#cmbSemestreAcademico option").each(function () {
-                if ($(this).text().trim() === semestreActual) {
-                    $(this).prop("selected", true);
-                    return false;
-                }
-            });
-        }
-    });
 }
