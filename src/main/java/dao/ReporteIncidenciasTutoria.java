@@ -17,19 +17,24 @@ public class ReporteIncidenciasTutoria extends JpaPadre {
     }
     
     public List<IncidenciaTutoriaDTO> obtenerIncidencias(String anio, String semestre) {
-        String sql = "SELECT i.Fecha AS Fecha, " +
-                     "i.Observacion AS Observacion, " +
-                     "s.Activo AS Activo, " +
-                     "t.Incidencia AS Incidencia, " +
-                     "t.CodigoIncidencia AS CodigoIncidencia " +
-                     "FROM IncidenciasTutoria i " +
-                     "INNER JOIN SemestreAcademico s ON i.Semestre = s.Semestre " +
-                     "AND s.Semestre = ? " +
-                     "AND s.Anio = ? " +
-                     "AND s.Activo = 1 " +
-                     "INNER JOIN TipoIncidencia t ON t.CodigoIncidencia = i.CodigoIncidencia " +
-                     "WHERE i.Estado = 'S' " +
-                     "ORDER BY i.Fecha";
+        String sql = "SELECT " +
+             "i.Fecha AS Fecha, " +
+             "i.Observacion AS Observacion, " +
+             "t.Incidencia AS Incidencia, " +
+             "t.CodigoIncidencia AS CodigoIncidencia, " +
+             "UPPER(CONCAT(su.APaterno, ' ', su.AMaterno, ' ', su.Nombre1, ' ', su.Nombre2)) AS Tutor " +
+             "FROM " +
+             "IncidenciasTutoria i " +
+             "INNER JOIN SemestreAcademico s ON i.Semestre = s.Semestre " +
+             "AND s.Semestre = ? " +
+             "AND s.Anio = ? " +
+             "AND s.Activo = 1 " +
+             "INNER JOIN TipoIncidencia t ON t.CodigoIncidencia = i.CodigoIncidencia " +
+             "INNER JOIN Docente d ON d.CodigoDocente = i.CodigoDocente " +
+             "INNER JOIN Sujeto su ON su.CodigoSujeto = d.CodigoSujeto " +
+             "WHERE i.Estado = 'S' " +
+             "ORDER BY i.Fecha;";
+
                      
         EntityManager em = getEntityManager();
         try {
@@ -52,8 +57,10 @@ public class ReporteIncidenciasTutoria extends JpaPadre {
                 IncidenciaTutoriaDTO incidencia = new IncidenciaTutoriaDTO(
                         fechaFormateada,                    // Fecha (convertida de Timestamp a String)
                         row[1] != null ? row[1].toString() : null,  // Observacion
-                        row[2] != null ? row[3].toString() : null,  // Incidencia
-                        row[3] != null ? row[4].toString() : null   // CodigoIncidencia
+                        row[2] != null ? row[2].toString() : null,  // Incidencia
+                        row[3] != null ? row[3].toString() : null,   // CodigoIncidencia
+                        row[4] != null ? row[4].toString() : null   // CodigoIncidencia
+                        
                 );
                 incidenciaList.add(incidencia);
             }

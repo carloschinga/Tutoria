@@ -22,7 +22,6 @@ $(document).ready(function () {
             console.log('No se ha seleccionado ningún semestre');
         }
     });
-
     $('#btnImprimir').click(function () {
         // Obtener el valor del semestre seleccionado
         let semestreSeleccionado = $('#cmbSemestreAcademico').val();
@@ -78,7 +77,8 @@ $(document).ready(function () {
                     exportToPDF(data.lista, {
                         anio: codiAño,
                         semestre: codiSemestre,
-                        sesion: sesion
+                        sesion: sesion,
+                        tutorNombre: data.lista[0].Tutor
                     });
                 } else {
                     alert("No existe datos.");
@@ -179,16 +179,19 @@ function addHeader(doc, params) {
     doc.setFontSize(10);
     doc.text(`Año: ${params.anio}`, 20, 35);
     doc.text(`Semestre: ${params.semestre}`, 20, 40);
+    if (params.tutorNombre) {
+        doc.text(`Tutor: ${params.tutorNombre}`, 20, 45); // Ajusta la posición según necesites
+    }
+    
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "Nombre", "Codigo_Universitario", "Asistencia", "Tutor"];
+    const headers = ["#", "Nombre", "Codigo_Universitario", "Asistencia"];
     const body = data.map((row, index) => [
             (index + 1).toString(),
             row.NombreAlumno,
             row.CodigoUniversitario,
-            row.Asistencia,
-            row.Tutor
+            row.Asistencia
         ]);
 
     const firstPageStartY = 55;

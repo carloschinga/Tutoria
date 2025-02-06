@@ -66,7 +66,7 @@ $(document).ready(function () {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,
-                        semestre: codiSemestre
+                        semestre: codiSemestre,
                     });
                 } else {
                     alert("No se encontraron incidencias para este semestre.");
@@ -130,16 +130,21 @@ function addHeader(doc, params) {
     doc.setFontSize(10);
     doc.text(`Año: ${params.anio}`, 20, 35);
     doc.text(`Semestre: ${params.semestre}`, 20, 40);
+    if (params.tutorNombre) {
+        doc.text(`Tutor: ${params.tutorNombre}`, 20, 45); // Ajusta la posición según necesites
+    }
+   
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "FECHA", "INCIDENCIA","OBSERVACION","CODIGO INCIDENCIA"];
+    const headers = ["#", "FECHA", "INCIDENCIA","OBSERVACION","CODIGO INCIDENCIA","TUTOR"];
     const body = data.map((row, index) => [
             (index + 1).toString(),
             row.fecha, // Fecha
             row.incidencia, // Incidencia
             row.observacion, // Observación
-            row.codigoIncidencia       // Código Incidencia
+            row.codigoIncidencia,       // Código Incidencia
+            row.tutor       // Código Incidencia
         ]);
 
     const firstPageStartY = 55;

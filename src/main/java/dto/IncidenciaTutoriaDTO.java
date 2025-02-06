@@ -9,13 +9,16 @@ public class IncidenciaTutoriaDTO {
     ;
     private String incidencia;
     private String codigoIncidencia;
+    private String tutor;
 
+    
     // Constructor
-    public IncidenciaTutoriaDTO(String fecha, String observacion, String incidencia, String codigoIncidencia) {
+    public IncidenciaTutoriaDTO(String fecha, String observacion, String incidencia, String codigoIncidencia,String tutor) {
         this.fecha = fecha;
         this.observacion = observacion;
         this.incidencia = incidencia;
         this.codigoIncidencia = codigoIncidencia;
+        this.tutor = tutor;
     }
 
     // Getters y Setters
@@ -23,9 +26,18 @@ public class IncidenciaTutoriaDTO {
         return fecha;
     }
 
+    public String getTutor() {
+        return tutor;
+    }
+
+    public void setTutor(String tutor) {
+        this.tutor = tutor;
+    }
+
     public void setFecha(String fecha) {
         this.fecha = fecha;
-    }  
+    }
+    
     public String getObservacion() {
         return observacion;
     }
@@ -58,6 +70,7 @@ public class IncidenciaTutoriaDTO {
                 ", observacion='" + observacion + '\'' +
                 ", incidencia='" + incidencia + '\'' +
                 ", codigoIncidencia='" + codigoIncidencia + '\'' +
+                ", tutor='" + tutor + '\'' +
                 '}';
     }
 }

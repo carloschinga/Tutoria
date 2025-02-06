@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO para obtener reportes de actividades.
- * Extiende JpaPadre para manejar la persistencia.
- * 
+ * DAO para obtener reportes de actividades. Extiende JpaPadre para manejar la
+ * persistencia.
+ *
  */
 public class ReporteActividadjpaController extends JpaPadre {
 
@@ -23,10 +23,17 @@ public class ReporteActividadjpaController extends JpaPadre {
 
     // Método para obtener actividades por semestre
     public List<ReporteActividad> obtenerActividadesPorSemestre(String anio, String semestre) {
-        String sql = "SELECT act.Actividad AS Actividad, act.Lugar AS Lugar " +
-             "FROM ActividadTutoria act " +
-             "INNER JOIN TipoActividad tact ON tact.CodigoTipoActividad = act.CodigoTipoActividad " +
-             "WHERE act.Anio = ? AND act.Semestre = ?";
+        String sql = "SELECT "
+                + "act.Actividad AS Actividad, "
+                + "act.Lugar AS Lugar, "
+                + "UPPER(CONCAT(s.APaterno, ' ', s.AMaterno, ' ', s.Nombre1, ' ', s.Nombre2)) AS Tutor "
+                + "FROM ActividadTutoria act "
+                + "INNER JOIN TipoActividad tact ON tact.CodigoTipoActividad = act.CodigoTipoActividad "
+                + "INNER JOIN AsistenciaTutoria ast ON ast.CodigoDocente = act.CodigoDocente "
+                + "INNER JOIN Docente d ON d.CodigoDocente = ast.CodigoDocente "
+                + "INNER JOIN Sujeto s ON s.CodigoSujeto = d.CodigoSujeto "
+                + "WHERE act.Anio = act.Anio "
+                + "AND act.Semestre = act.Semestre;";
 
         EntityManager em = getEntityManager();
         try {
@@ -43,7 +50,8 @@ public class ReporteActividadjpaController extends JpaPadre {
             for (Object[] row : resultList) {
                 ReporteActividad reporte = new ReporteActividad(
                         (String) row[0], // Actividad
-                        (String) row[1]  // Lugar
+                        (String) row[1], // Lugar
+                        (String) row[2] // Lugar
                 );
                 reporteList.add(reporte);
             }
