@@ -9,6 +9,8 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,900" rel="stylesheet">
         <!-- Custom styles for this template-->
         <link href="css/sb-admin-2.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
         <style>
             body {
                 font-family: 'Nunito', sans-serif;
@@ -56,18 +58,23 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin-top: -18px;
+                position: relative;
+                top: 1px; /* Ajusta el valor */
             }
             .diseñosemestre {
                 text-align: right;
-                margin-top: -10px;
+                margin-right: 20px; /* Ajusta el valor según lo necesites */
+                margin-top: 4px;
+               
             }
             #btnCerrarSesion {
-                float: right;
-                margin-top: 20px; /* Ajusta este valor para moverlo más abajo */
+                float:right;
+                margin-top: -18px; /* Ajusta el valor según necesites */
                 border-color: #c82333;
                 color: white;
             }
-            
+
         </style>
     </head>
     <body>
@@ -91,8 +98,10 @@
                             </div>
                         </div>
                         <div>
-                            <p class="diseñosemestre" id="semestre">Semestre 2025-1</p>
-                            <button class="btn btn-sm btn-primary mb-2" id="btnCerrarSesion">Cerrar Sesión</button>
+                            <p class="diseñosemestre" id="semestre"></p>
+                            <button class="btn btn-sm btn-primary mb-2" id="btnCerrarSesion">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
                         </div>
                     </div>
                     <p style="margin-bottom: 0px;" id="lbldocente">CARGANDO DOCENTE....</p>
@@ -108,6 +117,6 @@
         <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
         <script src="js/sb-admin-2.min.js"></script>
         <script src="js/paneltutor.js" type="text/javascript"></script>
-        
+
     </body>
 </html>

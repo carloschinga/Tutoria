@@ -9,6 +9,8 @@
         <!-- Custom styles for this template-->
         <link href="css/sb-admin-2.min.css" rel="stylesheet">
         <!-- Custom CSS for the style adaptation -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
         <style>
             body {
                 font-family: 'Nunito', sans-serif;
@@ -54,13 +56,22 @@
             }
             .diseñosemestre {
                 text-align: right;
+                margin-right: 20px; /* Ajusta el valor según lo necesites */
                 margin-top: -40px;
             }
             #btnCerrarSesion {
                 float: right;
-                margin-top: 20px; /* Ajusta este valor para moverlo más abajo */
+                margin-top: -18px; /* Ajusta este valor para moverlo más abajo */
                 border-color: #c82333;
                 color: white;
+            }
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: -18px;
+                position: relative;
+                top: 1px; /* Ajusta el valor */
             }
         </style>
     </head>
@@ -81,7 +92,9 @@
                         </ul>
                     </div>
                     <p class="diseñosemestre" id="semestre"></p>
-                    <button class="btn btn-sm btn-primary mb-2" id="btnCerrarSesion">Cerrar Sesión</button>
+                    <button class="btn btn-sm btn-primary mb-2" id="btnCerrarSesion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
                 </div>
                 <div class="card-body" id="cardDdetalle">
                 </div>
