@@ -11,18 +11,24 @@
         <script >
             $(document).ready(function () {
                 $("#btnPanelTutor").click(function () {
-                    window.location.href = "paneltutor.html";
-                   /* let param = {};
-                    $.getJSON("paneldirector", param, function (data) {
-                        
-                    });*/
+                     $.get("paneltutor", {admLogin: "40801418", codiFacu: "03"})
+                            .done(function (data) {
+                               
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                console.error("Error en la solicitud:", textStatus, errorThrown);
+                                alert("Error al acceder al Panel Tutor.");
+                            });
                 });
                 $("#btnPanelDirector").click(function () {
-                    window.location.href = "paneldirector.html";
-                   /* let param = {};
-                    $.getJSON("paneldirector", param, function (data) {
-                        
-                    });*/
+                    $.get("paneldirector", {admLogin: "40801418", codiFacu: "03"})
+                            .done(function (data) {
+                               
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                console.error("Error en la solicitud:", textStatus, errorThrown);
+                                alert("Error al acceder al Panel Tutor.");
+                            });
                 });
 
             });

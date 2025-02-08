@@ -2,67 +2,73 @@ $(document).ready(function () {
     let asignar = false;
     let editar = false;
     let listadocentes;
-    
+
     //cargar datos inicales
-    $.getJSON("RegistrarSession", {rol: 1}, function (data) {
-        $("#resultado").text(data.resultado);
 
-        $.getJSON("SemestreAcademicoCRUD",{opcion: 1}, function (data) {
-            if (data.resultado === "ok") {
-                $('#semestre').text(data.semestre);
-                console.log(data.semestre);
+
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
+        console.log("semestre "  );
+         console.log(data);
+        if (data.resultado === "ok") {
+            $('#semestre').text(data.semestre);
+            
+        } else {
+            if (data.mensaje === 'nopermiso') {
+                alert("Error: No tienes permiso para acceder aqui");
             } else {
-                if (data.mensaje === 'nopermiso') {
-                    alert("Error: No tienes permiso para acceder aqui");
-                } else {
-                    alert("Error general: No se pudo cargar los semestres academicos.");
-                }
+                alert("Error general: No se pudo cargar los semestres academicos.");
             }
+        }
 
-        });
-        $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
-            if (data.resultado === "ok") {
-                let escuelas = $('#escuelas');
-                escuelas.empty().append('<option value="" selected disabled>Selecciona una escuela</option>');
-
-                $.each(data.escuelas, function (key, value) {
-                    let codigoEscuela = $('<div>').text(value.codigoEscuela).html();
-                    let escuela = $('<div>').text(value.escuela).html();
-                    escuelas.append('<option value="' + codigoEscuela + '">' + escuela + '</option>');
-                });
-
-                let ciclos = $('#ciclos');
-                ciclos.empty().append('<option value="" selected disabled>Selecciona un ciclo</option>');
-
-                $.each(data.ciclos, function (key, value) {
-                    let ciclo = $('<div>').text(value).html();
-                    ciclos.append('<option value="' + ciclo + '">' + ciclo + '</option>');
-                });
-            } else {
-                if (data.mensaje === 'nopermiso') {
-                    alert("Error: No tienes permiso para acceder aqui");
-                } else {
-                    alert("Error general: No se pudo cargar las escuelas.");
-                }
-            }
-        });
-        $.getJSON("DocentesCRUD", {opcion: 1}, function (data) {
-            if (data.resultado === "ok") {
-                let Docentes = $('#Docentes');
-                Docentes.html('<option value=""selected disabled>Selecciona un docente</option>');
-                listadocentes = data.data;
-                $.each(listadocentes, function (key, value) {
-                    Docentes.append('<option value="' + value.CodigoDocente + '">' + value.Nombres + '</option>');
-                });
-            } else {
-                if (data.mensaje === 'nopermiso') {
-                    alert("Error: No tienes permiso para acceder aqui");
-                } else {
-                    alert("Error general: No se pudo cargar los docentes.");
-                }
-            }
-        });
     });
+    $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
+        console.log("escuelas " );
+        console.log(data);
+        
+        if (data.resultado === "ok") {
+            let escuelas = $('#escuelas');
+            escuelas.empty().append('<option value="" selected disabled>Selecciona una escuela</option>');
+
+            $.each(data.escuelas, function (key, value) {
+                let codigoEscuela = $('<div>').text(value.codigoEscuela).html();
+                let escuela = $('<div>').text(value.escuela).html();
+                escuelas.append('<option value="' + codigoEscuela + '">' + escuela + '</option>');
+            });
+
+            let ciclos = $('#ciclos');
+            ciclos.empty().append('<option value="" selected disabled>Selecciona un ciclo</option>');
+
+            $.each(data.ciclos, function (key, value) {
+                let ciclo = $('<div>').text(value).html();
+                ciclos.append('<option value="' + ciclo + '">' + ciclo + '</option>');
+            });
+        } else {
+            if (data.mensaje === 'nopermiso') {
+                alert("Error: No tienes permiso para acceder aqui");
+            } else {
+                alert("Error general: No se pudo cargar las escuelas.");
+            }
+        }
+    });
+    $.getJSON("DocentesCRUD", {opcion: 1}, function (data) {
+        console.log("docentes " );
+        console.log(data);
+        if (data.resultado === "ok") {
+            let Docentes = $('#Docentes');
+            Docentes.html('<option value=""selected disabled>Selecciona un docente</option>');
+            listadocentes = data.data;
+            $.each(listadocentes, function (key, value) {
+                Docentes.append('<option value="' + value.CodigoDocente + '">' + value.Nombres + '</option>');
+            });
+        } else {
+            if (data.mensaje === 'nopermiso') {
+                alert("Error: No tienes permiso para acceder aqui");
+            } else {
+                alert("Error general: No se pudo cargar los docentes.");
+            }
+        }
+    });
+
 
     //funciones
     $.fn.listar = function () {
@@ -141,7 +147,7 @@ $(document).ready(function () {
             });
         }
     };
-   
+
     //eventos
     $('#ciclos').change(function () {
         $.fn.listar();
@@ -368,6 +374,6 @@ $(document).ready(function () {
             alert("Cambie almenos un tutor para grabar cambios.");
         }
     });
-    
-    
+
+
 });

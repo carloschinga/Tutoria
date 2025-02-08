@@ -41,67 +41,57 @@ public class TutoriaCRUD extends HttpServlet {
                 if (emprObj != null) {
                     String empr = emprObj.toString();
                     String opcion = request.getParameter("opcion");
-                    String rol = session.getAttribute("director").toString();
                     TutoriaJpaController dao = new TutoriaJpaController(empr);
 
                     switch (opcion) {
                         case "1": //Insertar tutores
-                            if ("ok".equals(rol)) {
-                                String docente = request.getParameter("docente");
-                                StringBuilder sb = new StringBuilder();
-                                try (BufferedReader reader = request.getReader()) {
-                                    String line;
-                                    while ((line = reader.readLine()) != null) {
-                                        sb.append(line);
-                                    }
+                            String docente = request.getParameter("docente");
+                            StringBuilder sb = new StringBuilder();
+                            try (BufferedReader reader = request.getReader()) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    sb.append(line);
                                 }
-                                String body = sb.toString();
-                                if (!"".equals(body)) {
-                                    String resultado = dao.insertarRegistrosDesdeJson(body, docente);
-                                    if (resultado.equals("S")) {
-                                        out.print("{\"resultado\":\"ok\"}");
-                                    } else {
-                                        out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
-                                    }
+                            }
+                            String body = sb.toString();
+                            if (!"".equals(body)) {
+                                String resultado = dao.insertarRegistrosDesdeJson(body, docente);
+                                if (resultado.equals("S")) {
+                                    out.print("{\"resultado\":\"ok\"}");
                                 } else {
-                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
+                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
                                 }
                             } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
+                                out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
                             }
+
                             break;
                         case "2": //Modificar tutores
-                            if ("ok".equals(rol)) {
-                                StringBuilder sb = new StringBuilder();
-                                try (BufferedReader reader = request.getReader()) {
-                                    String line;
-                                    while ((line = reader.readLine()) != null) {
-                                        sb.append(line);
-                                    }
+                            sb = new StringBuilder();
+                            try (BufferedReader reader = request.getReader()) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    sb.append(line);
                                 }
-                                String body = sb.toString();
-                                if (!"".equals(body)) {
-                                    String resultado = dao.modificarlista(body);
-                                    if (resultado.equals("S")) {
-                                        out.print("{\"resultado\":\"ok\"}");
-                                    } else {
-                                        out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
-                                    }
+                            }
+                            body = sb.toString();
+                            if (!"".equals(body)) {
+                                String resultado = dao.modificarlista(body);
+                                if (resultado.equals("S")) {
+                                    out.print("{\"resultado\":\"ok\"}");
                                 } else {
-                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
+                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
                                 }
                             } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
+                                out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
                             }
+
                             break;
                         case "3": //Listar tutorados por docente
-                            String docente = session.getAttribute("docente").toString();
-                            if ("ok".equals(docente)) {
-                                String codigoDocente = session.getAttribute("codigoDocente").toString();
-                                out.print("{\"data\":" + dao.listarPorDocente(Integer.parseInt(codigoDocente)) + ",\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                            docente = session.getAttribute("codigoDocente").toString();
+                            String codigoDocente = session.getAttribute("codigoDocente").toString();
+                            out.print("{\"data\":" + dao.listarPorDocente(Integer.parseInt(codigoDocente)) + ",\"resultado\":\"ok\"}");
+
                             break;
                         default:
                             out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");

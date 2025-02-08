@@ -1,12 +1,22 @@
 $(document).ready(function () {
-
-    $.getJSON("DocentesCRUD", {opcion: 2}, function (data) {
-        console.log(data.nombre);
-        if(data.resultado==="ok")
-            $("#lbldocente").text("DOCENTE: " + data.nombre);
-        else
-            $("#lbldocente").text("DOCENTE: ");
+    document.getElementById('btnCerrarSesion').addEventListener('click', function () {
+        document.getElementById('lbldocente').style.display = 'none';
+        document.getElementById('cardDdetalle').style.display = 'none';
     });
+    $.getJSON("DocentesCRUD", {opcion: 2, _: new Date().getTime()}, function (data) {
+        console.log("Respuesta del servidor:", data);
+
+        if (data.resultado === "ok" && data.nombre) {
+            $("#lbldocente").text("DOCENTE: " + data.nombre);
+        } else {
+            console.warn("Error o docente no encontrado:", data.mensaje);
+            $("#lbldocente").text("DOCENTE: No disponible");
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("Error en la petición AJAX:", textStatus, errorThrown);
+        $("#lbldocente").text("DOCENTE: Error al obtener datos");
+    });
+
     $("#cardDdetalle").load("creacionactividad.html");
 
     $("#mnuActividad").click(function () {

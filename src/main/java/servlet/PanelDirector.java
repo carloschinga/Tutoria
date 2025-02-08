@@ -4,6 +4,7 @@
  */
 package servlet;
 
+import dao.PanelDirectorDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -11,6 +12,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.json.JSONObject;
 
 /**
  *
@@ -32,14 +35,41 @@ public class PanelDirector extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            
-            String director= request.getParameter("director");  //1 es director, 0 no es director
-            String docente= request.getParameter("docente");
-            String codigodocente = request.getParameter("codigoDocente");
-            String facultad= request.getParameter("facultad");
-            
-            
-            response.sendRedirect("paneldirector.html");
+
+            String admLogin = request.getParameter("admLogin");
+            String codiFacu = request.getParameter("codiFacu");
+
+            PanelDirectorDAO pdDAO = new PanelDirectorDAO("a");
+            String resultado = pdDAO.existeDirectorTutoriaXFacultad(admLogin, codiFacu);
+
+            JSONObject jsonobj = new JSONObject(resultado);
+
+            if (jsonobj.getString("Resultado").equals("ok")) {
+               
+                HttpSession sesion = request.getSession(true);
+                sesion.setAttribute("director", admLogin);
+                sesion.setAttribute("facultad", codiFacu);
+                sesion.setAttribute("empr", "a");
+                 response.sendRedirect("paneldirector.html");
+                
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Código 403
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Acceso Denegado</title>");
+                out.println("<style>");
+                out.println("body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }");
+                out.println("h2 { color: red; }");
+                out.println("</style>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h2>¡Acceso Denegado!</h2>");
+                out.println("<p>No tienes permiso para acceder a este módulo.</p>");
+                 out.println("</body>");
+                out.println("</html>");
+            }
+
         }
     }
 

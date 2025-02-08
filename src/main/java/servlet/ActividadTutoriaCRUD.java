@@ -46,53 +46,46 @@ public class ActividadTutoriaCRUD extends HttpServlet {
                 Object emprObj = session.getAttribute("empr");
                 if (emprObj != null) {
                     String empr = emprObj.toString();
-                    String rol = session.getAttribute("docente").toString();
                     String opcion = request.getParameter("opcion");
                     ActividadTutoriaJpaController dao = new ActividadTutoriaJpaController(empr);
 
                     switch (opcion) {
                         case "1": //Agregar Actividad
-                            if ("ok".equals(rol)) {
-                                String actividad = request.getParameter("actividad");
-                                String tipo = request.getParameter("tipo");
-                                String fecha = request.getParameter("fecha");
-                                String lugar = request.getParameter("lugar");
+                            String actividad = request.getParameter("actividad");
+                            String tipo = request.getParameter("tipo");
+                            String fecha = request.getParameter("fecha");
+                            String lugar = request.getParameter("lugar");
 
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                Object[] semestre = semesdao.obtenerSemestreActual();
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
-                                int item = dao.obtenerUltItm(Integer.parseInt(codigodocente), (String) semestre[0], (Character) semestre[1]);
-                                if (item >= 0) {
-                                    ActividadTutoriaPK actpk = new ActividadTutoriaPK(Integer.parseInt(codigodocente), (String) semestre[0], (Character) semestre[1], item + 1);
-                                    ActividadTutoria act = new ActividadTutoria(actpk);
-                                    act.setActividad(actividad);
-                                    act.setCodigoTipoActividad(Integer.parseInt(tipo));
+                            SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
+                            Object[] semestre = semesdao.obtenerSemestreActual();
+                            String codigodocente = session.getAttribute("codigoDocente").toString();
+                            int item = dao.obtenerUltItm(Integer.parseInt(codigodocente), (String) semestre[0], (Character) semestre[1]);
+                            if (item >= 0) {
+                                ActividadTutoriaPK actpk = new ActividadTutoriaPK(Integer.parseInt(codigodocente), (String) semestre[0], (Character) semestre[1], item + 1);
+                                ActividadTutoria act = new ActividadTutoria(actpk);
+                                act.setActividad(actividad);
+                                act.setCodigoTipoActividad(Integer.parseInt(tipo));
 
-                                    DateTimeFormatter formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-                                    LocalDateTime fechaHoraLocalDateTime = LocalDateTime.parse(fecha, formatterInput);
-                                    Date fechaHoraDate = Date.from(fechaHoraLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                                    act.setFechaActividad(fechaHoraDate);
-                                    act.setEstado("S");
-                                    act.setLugar(lugar);
-                                    dao.create(act);
-                                    out.print("{\"resultado\":\"ok\"}");
-                                } else {
-                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"errordb\"}");
-                                }
+                                DateTimeFormatter formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                                LocalDateTime fechaHoraLocalDateTime = LocalDateTime.parse(fecha, formatterInput);
+                                Date fechaHoraDate = Date.from(fechaHoraLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                                act.setFechaActividad(fechaHoraDate);
+                                act.setEstado("S");
+                                act.setLugar(lugar);
+                                dao.create(act);
+                                out.print("{\"resultado\":\"ok\"}");
                             } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
+                                out.print("{\"resultado\":\"error\",\"mensaje\":\"errordb\"}");
                             }
+
                             break;
                         case "2": // listar actividades
-                            if ("ok".equals(rol)) {
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
-                                Object[] semestre = semesdao.obtenerSemestreActual();
-                                String lista = dao.Listar(Integer.parseInt(codigodocente), (String) semestre[0], (Character) semestre[1]);
-                                    out.print("{\"resultado\":\"ok\",\"data\":"+lista+"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                            semesdao = new SemestreAcademicoJpaController(empr);
+                            codigodocente = session.getAttribute("codigoDocente").toString();
+                            semestre = semesdao.obtenerSemestreActual();
+                            String lista = dao.Listar(Integer.parseInt(codigodocente), (String) semestre[0], (Character) semestre[1]);
+                            out.print("{\"resultado\":\"ok\",\"data\":" + lista + "}");
+
                             break;
                         default:
                             out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");

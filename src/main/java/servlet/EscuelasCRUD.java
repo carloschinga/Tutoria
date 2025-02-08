@@ -41,22 +41,17 @@ public class EscuelasCRUD extends HttpServlet {
                 Object emprObj = session.getAttribute("empr");
                 if (emprObj != null) {
                     String empr = emprObj.toString();
-                    String rol = session.getAttribute("director").toString();
-
+                
                     String opcion = request.getParameter("opcion");
                     EscuelasJpaController dao = new EscuelasJpaController(empr);
 
                     switch (opcion) {
                         case "1": //Lista Escuelas y ciclos por facultad
-                            if ("ok".equals(rol)) {
-                                String facultad = session.getAttribute("facultad").toString();
+                                 String facultad = session.getAttribute("facultad").toString();
                                 MatriculasJpaController matriculadao = new MatriculasJpaController(empr);
 
                                 out.print("{\"escuelas\":" + dao.buscarFacultad(facultad) + ",\"resultado\":\"ok\",\"ciclos\":" + matriculadao.buscarCiclosMatriculados(facultad) + "}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
-                            break;
+                               break;
 
                         default:
                             out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");

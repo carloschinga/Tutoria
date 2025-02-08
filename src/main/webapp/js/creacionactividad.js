@@ -2,104 +2,103 @@ $(document).ready(function () {
     const ahora = new Date();
     var tabla;
 
-    $.getJSON("RegistrarSession", {rol: 1}, function (data) {
-        // Ajustar los minutos a 00
-        ahora.setMinutes(0, 0, 0);
+    // Ajustar los minutos a 00
+    ahora.setMinutes(0, 0, 0);
 
-        // Obtener la fecha en formato 'YYYY-MM-DDTHH:mm'
-        const fechaFormateada = ahora.toISOString().slice(0, 16);
+    // Obtener la fecha en formato 'YYYY-MM-DDTHH:mm'
+    const fechaFormateada = ahora.toISOString().slice(0, 16);
 
-        // Asignar la fecha al input con jQuery
-        $('#actividad-fecha').val(fechaFormateada);
+    // Asignar la fecha al input con jQuery
+    $('#actividad-fecha').val(fechaFormateada);
 
-        if (tabla) {
-            tabla.destroy();
-        }
+    if (tabla) {
+        tabla.destroy();
+    }
 
-        tabla = $('#tabla-actividades').DataTable({
-            searching: false,
-            paging: false,
-            info: false,
-            "ajax": {
-                "url": "ActividadTutoriaCRUD",
-                "type": "POST",
-                "data": function (d) {
-                    d.opcion = 2;
-                },
-                "dataSrc": function (json) {
-                    // Verificar si la respuesta contiene "OK"
-                    if (json.resultado === "ok") {
-                        return json.data;
-                    } else {
-                        alert('Error: ' + json.mensaje);
-                        return []; // Retorna un array vacío si no es "OK"
+    tabla = $('#tabla-actividades').DataTable({
+        searching: false,
+        paging: false,
+        info: false,
+        "ajax": {
+            "url": "ActividadTutoriaCRUD",
+            "type": "POST",
+            "data": function (d) {
+                d.opcion = 2;
+            },
+            "dataSrc": function (json) {
+                // Verificar si la respuesta contiene "OK"
+                if (json.resultado === "ok") {
+                    return json.data;
+                } else {
+                    alert('Error: ' + json.mensaje);
+                    return []; // Retorna un array vacío si no es "OK"
+                }
+            }
+        },
+        "columns": [
+            {"data": "sesion"},
+            {"data": "actividad"},
+            {"data": "nombretipoactividad"},
+            {
+                "data": "fecha",
+                "render": function (data, type, row, meta) {
+                    // Formatear la fecha para que muestre hasta los minutos
+                    if (data) {
+                        const fecha = new Date(data);
+                        const opciones = {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        };
+                        return fecha.toLocaleDateString('es-ES', opciones).replace(',', '');
                     }
+                    return data;
                 }
             },
-            "columns": [
-                {"data": "sesion"},
-                {"data": "actividad"},
-                {"data": "nombretipoactividad"},
-                {
-                    "data": "fecha",
-                    "render": function (data, type, row, meta) {
-                        // Formatear la fecha para que muestre hasta los minutos
-                        if (data) {
-                            const fecha = new Date(data);
-                            const opciones = {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            };
-                            return fecha.toLocaleDateString('es-ES', opciones).replace(',', '');
-                        }
-                        return data;
-                    }
-                },
-                {"data": "lugar"},
-                {"data": null,
-                    render: function (data, type, row, meta) {
-                        return `<a class="btn btn-primary" id="btnAsignarAlumnos" href="#" data-sesion="${row.sesion}" >Asignar Alumnos</a>`;
-                    }
-                }
-            ]
-        });
-
-        $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
-            if (data.resultado === "ok") {
-                $('#semestre').text(data.semestre);
-                console.log(data.semestre);
-            } else {
-                if (data.mensaje === 'nopermiso') {
-                    alert("Error: No tienes permiso para acceder aqui");
-                } else {
-                    alert("Error general: No se pudo cargar las semestres.");
+            {"data": "lugar"},
+            {"data": null,
+                render: function (data, type, row, meta) {
+                    return `<a class="btn btn-primary" id="btnAsignarAlumnos" href="#" data-sesion="${row.sesion}" >Asignar Alumnos</a>`;
                 }
             }
-
-        });
-        $.getJSON("TipoActividadCRUD", {opcion: 1}, function (data) {
-            if (data.resultado === "ok") {
-                let actividad = $('#actividad-tipo');
-                actividad.empty().append('<option value="" selected disabled>Selecciona el tipo</option>');
-
-                $.each(data.data, function (key, value) {
-                    let codigoactividad = $('<div>').text(value.codtipact).html();
-                    let acti = $('<div>').text(value.nombtipact).html();
-                    actividad.append('<option value="' + codigoactividad + '">' + acti + '</option>');
-                });
-
-            } else {
-                if (data.mensaje === 'nopermiso') {
-                    alert("Error: No tienes permiso para acceder aqui");
-                } else {
-                    alert("Error general: No se pudo cargar Los datos.");
-                }
-            }
-        });
+        ]
     });
+
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
+        if (data.resultado === "ok") {
+            $('#semestre').text(data.semestre);
+            console.log(data.semestre);
+        } else {
+            if (data.mensaje === 'nopermiso') {
+                alert("Error: No tienes permiso para acceder aqui");
+            } else {
+                alert("Error general: No se pudo cargar las semestres.");
+            }
+        }
+
+    });
+    $.getJSON("TipoActividadCRUD", {opcion: 1}, function (data) {
+        if (data.resultado === "ok") {
+            let actividad = $('#actividad-tipo');
+            actividad.empty().append('<option value="" selected disabled>Selecciona el tipo</option>');
+
+            $.each(data.data, function (key, value) {
+                let codigoactividad = $('<div>').text(value.codtipact).html();
+                let acti = $('<div>').text(value.nombtipact).html();
+                actividad.append('<option value="' + codigoactividad + '">' + acti + '</option>');
+            });
+
+        } else {
+            if (data.mensaje === 'nopermiso') {
+                alert("Error: No tienes permiso para acceder aqui");
+            } else {
+                alert("Error general: No se pudo cargar Los datos.");
+            }
+        }
+    });
+
     $('#crear').on('click', function () {
         $('#modal-agregar').modal('show');
     });
@@ -187,8 +186,8 @@ $(document).ready(function () {
         if (tablaAlumno) {
             tablaAlumno.destroy();
         }
-     
-        
+
+
         tablaAlumno = $('#tabla-estudiantes').DataTable({
             searching: false,
             paging: false,
@@ -233,7 +232,7 @@ $(document).ready(function () {
                     }, "width": '40%'
                 }
             ]
-        }); 
+        });
 
     };
 
@@ -298,7 +297,7 @@ $(document).ready(function () {
     });
     $("#Grabar").click(function () {
         let datos = [];
-       const sesion = $("#txtSesion").val();
+        const sesion = $("#txtSesion").val();
         // Seleccionar todos los checkboxes con la clase .checkbox-plantilla que estén marcados
         $('.asignar-checkbox:checked').each(function () {
             // Obtener los valores de data-exacod y data-item

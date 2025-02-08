@@ -41,98 +41,77 @@ public class AsistenciaTutoriaCRUD extends HttpServlet {
                 Object emprObj = session.getAttribute("empr");
                 if (emprObj != null) {
                     String empr = emprObj.toString();
-                    String rol = session.getAttribute("docente").toString();
                     String opcion = request.getParameter("opcion");
                     AsistenciaTutoriaJpaController dao = new AsistenciaTutoriaJpaController(empr);
 
                     switch (opcion) {
                         case "1": //Lista de alumnos por sesion, asistencias, lista todos los almunos
-                            if ("ok".equals(rol)) {
-                                String sesion = request.getParameter("sesion");
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
+                            String sesion = request.getParameter("sesion");
+                            String codigodocente = session.getAttribute("codigoDocente").toString();
 
-                                out.print("{\"data\":" + dao.BuscarAsistencias(Integer.parseInt(codigodocente), Integer.parseInt(sesion)) + ",\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                            out.print("{\"data\":" + dao.BuscarAsistencias(Integer.parseInt(codigodocente), Integer.parseInt(sesion)) + ",\"resultado\":\"ok\"}");
                             break;
                         case "2"://cabecera para cuando se entra a la gestion de sesiones
-                            if ("ok".equals(rol)) {
-                                String sesion = request.getParameter("sesion");
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
+                            sesion = request.getParameter("sesion");
+                            codigodocente = session.getAttribute("codigoDocente").toString();
 
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                Object[] semestre = semesdao.obtenerSemestreActual();
+                            SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
+                            Object[] semestre = semesdao.obtenerSemestreActual();
 
-                                out.print(dao.ContarAsistenciasPorActividad(codigodocente, (String) semestre[0], (Character) semestre[1], Integer.parseInt(sesion)));
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                            out.print(dao.ContarAsistenciasPorActividad(codigodocente, (String) semestre[0], (Character) semestre[1], Integer.parseInt(sesion)));
                             break;
                         case "3"://Asignar alumnos para las actividades
-                            if ("ok".equals(rol)) {
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
-                                String sesion = request.getParameter("sesion");
-                                StringBuilder sb = new StringBuilder();
-                                try (BufferedReader reader = request.getReader()) {
-                                    String line;
-                                    while ((line = reader.readLine()) != null) {
-                                        sb.append(line);
-                                    }
+                            codigodocente = session.getAttribute("codigoDocente").toString();
+                            sesion = request.getParameter("sesion");
+                            StringBuilder sb = new StringBuilder();
+                            try (BufferedReader reader = request.getReader()) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    sb.append(line);
                                 }
-                                String body = sb.toString();
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                Object[] semestre = semesdao.obtenerSemestreActual();
-                                if (!"".equals(body)) {
-                                    String resultado = dao.AsignarAlumnos(body, codigodocente, (String) semestre[0], (Character) semestre[1], sesion);
-                                    if (resultado.equals("S")) {
-                                        out.print("{\"resultado\":\"ok\"}");
-                                    } else {
-                                        out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
-                                    }
+                            }
+                            String body = sb.toString();
+                            semesdao = new SemestreAcademicoJpaController(empr);
+                            semestre = semesdao.obtenerSemestreActual();
+                            if (!"".equals(body)) {
+                                String resultado = dao.AsignarAlumnos(body, codigodocente, (String) semestre[0], (Character) semestre[1], sesion);
+                                if (resultado.equals("S")) {
+                                    out.print("{\"resultado\":\"ok\"}");
                                 } else {
-                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
+                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
                                 }
                             } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
+                                out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
                             }
                             break;
                         case "4": //Lista de alumnos por sesion, asistencias, solo alumnos asignados
-                            if ("ok".equals(rol)) {
-                                String sesion = request.getParameter("sesion");
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
+                            sesion = request.getParameter("sesion");
+                            codigodocente = session.getAttribute("codigoDocente").toString();
 
-                                out.print("{\"data\":" + dao.BuscarAsistenciassoloasignados(Integer.parseInt(codigodocente), Integer.parseInt(sesion)) + ",\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                            out.print("{\"data\":" + dao.BuscarAsistenciassoloasignados(Integer.parseInt(codigodocente), Integer.parseInt(sesion)) + ",\"resultado\":\"ok\"}");
                             break;
                         case "5"://registro de asistencias para las actividades
-                            if ("ok".equals(rol)) {
-                                String codigodocente = session.getAttribute("codigoDocente").toString();
-                                String sesion = request.getParameter("sesion");
-                                StringBuilder sb = new StringBuilder();
-                                try (BufferedReader reader = request.getReader()) {
-                                    String line;
-                                    while ((line = reader.readLine()) != null) {
-                                        sb.append(line);
-                                    }
+                            codigodocente = session.getAttribute("codigoDocente").toString();
+                            sesion = request.getParameter("sesion");
+                            sb = new StringBuilder();
+                            try (BufferedReader reader = request.getReader()) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    sb.append(line);
                                 }
-                                String body = sb.toString();
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                Object[] semestre = semesdao.obtenerSemestreActual();
-                                if (!"".equals(body)) {
-                                    String resultado = dao.RegistrarAsistencias(body, codigodocente, (String) semestre[0], (Character) semestre[1], sesion);
-                                    if (resultado.equals("S")) {
-                                        out.print("{\"resultado\":\"ok\"}");
-                                    } else {
-                                        out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
-                                    }
+                            }
+                            body = sb.toString();
+                            semesdao = new SemestreAcademicoJpaController(empr);
+                            semestre = semesdao.obtenerSemestreActual();
+                            if (!"".equals(body)) {
+                                String resultado = dao.RegistrarAsistencias(body, codigodocente, (String) semestre[0], (Character) semestre[1], sesion);
+                                if (resultado.equals("S")) {
+                                    out.print("{\"resultado\":\"ok\"}");
                                 } else {
-                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
+                                    out.print("{\"resultado\":\"error\",\"mensaje\":\"errorsql\"}");
                                 }
                             } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
+                                out.print("{\"resultado\":\"error\",\"mensaje\":\"faltadata\"}");
                             }
                             break;
                         default:

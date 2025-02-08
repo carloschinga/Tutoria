@@ -9,7 +9,6 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,900" rel="stylesheet">
         <!-- Custom styles for this template-->
         <link href="css/sb-admin-2.min.css" rel="stylesheet">
-        <!-- Custom CSS for the style adaptation -->
         <style>
             body {
                 font-family: 'Nunito', sans-serif;
@@ -53,36 +52,52 @@
             .table tbody td {
                 text-align: center;
             }
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
             .diseñosemestre {
                 text-align: right;
-                margin-top: -40px;
-                
-                
+                margin-top: -10px;
             }
+            #btnCerrarSesion {
+                float: right;
+                margin-top: 20px; /* Ajusta este valor para moverlo más abajo */
+                border-color: #c82333;
+                color: white;
+            }
+            
         </style>
     </head>
-     <body>
+    <body>
         <div class="container mt-5">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-sm rounded" id="mnuActividad">Actividad</a>
-                    <a class="btn btn-primary btn-sm rounded" id="mnuAsistencia">Asistencia</a>
-                    <a class="btn btn-primary btn-sm rounded" id="mnuIncidencias">Incidencias</a>
-                    <div class="btn-group">
-                        <button class="btn btn-primary btn-sm rounded dropdown-toggle" type="button" id="dropdownReportes" data-bs-toggle="dropdown" aria-expanded="false">
-                            Reportes
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownReportes">
-                            <li><a class="dropdown-item" id="mnuReporteActividades" href="#">Reporte de Actividades</a></li>
-                            <li><a class="dropdown-item" id="mnulistaReporteAsistencias" href="#">Reporte de Asistencias</a></li>
-                            <li><a class="dropdown-item" id="mnulistaReporteincidencias" href="#">Reporte de Incidencias</a></li>
-                        </ul>
+                    <div class="header-container">
+                        <div>
+                            <a class="btn btn-primary btn-sm rounded" id="mnuActividad">Actividad</a>
+                            <a class="btn btn-primary btn-sm rounded" id="mnuAsistencia">Asistencia</a>
+                            <a class="btn btn-primary btn-sm rounded" id="mnuIncidencias">Incidencias</a>
+                            <div class="btn-group">
+                                <button class="btn btn-primary btn-sm rounded dropdown-toggle" type="button" id="dropdownReportes" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Reportes
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownReportes">
+                                    <li><a class="dropdown-item" id="mnuReporteActividades" href="#">Reporte de Actividades</a></li>
+                                    <li><a class="dropdown-item" id="mnulistaReporteAsistencias" href="#">Reporte de Asistencias</a></li>
+                                    <li><a class="dropdown-item" id="mnulistaReporteincidencias" href="#">Reporte de Incidencias</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="diseñosemestre" id="semestre">Semestre 2025-1</p>
+                            <button class="btn btn-sm btn-primary mb-2" id="btnCerrarSesion">Cerrar Sesión</button>
+                        </div>
                     </div>
-                    <p class="diseñosemestre" id="semestre"></p>
-                    <p style="margin-bottom: 0px;" id="lbldocente"> CARGANDO DOCENTE....</p>
+                    <p style="margin-bottom: 0px;" id="lbldocente">CARGANDO DOCENTE....</p>
                 </div>
-                <div class="card-body" id="cardDdetalle">
-                </div>
+                <div class="card-body" id="cardDdetalle"></div>
             </div>
         </div>
         <!-- Scripts -->

@@ -4,7 +4,7 @@
  */
 package servlet;
 
-import dao.TipoActividadJpaController;
+import dao.PanelTutorDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -13,13 +13,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.JSONObject;
 
 /**
  *
- * @author shaho
+ * @author san21
  */
-@WebServlet(name = "TipoActividadCRUD", urlPatterns = {"/TipoActividadCRUD"})
-public class TipoActividadCRUD extends HttpServlet {
+@WebServlet(name = "PanelTutor", urlPatterns = {"/paneltutor"})
+public class PanelTutor extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,27 +35,39 @@ public class TipoActividadCRUD extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            try {
-                HttpSession session = request.getSession(true);
-                Object emprObj = session.getAttribute("empr");
-                if (emprObj != null) {
-                    String empr = emprObj.toString();
-                    String opcion = request.getParameter("opcion");
-                    TipoActividadJpaController dao = new TipoActividadJpaController(empr);
 
-                    switch (opcion) {
-                        case "1": //Lista de docentes por facultad
-                                out.print("{\"data\":" + dao.listar() + ",\"resultado\":\"ok\"}");
-                              break;
-                        default:
-                            out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");
-                    }
-                } else {
-                    out.print("{\"resultado\":\"error\",\"mensaje\":\"nosession\"}");
-                }
-            } catch (Exception e) {
-                out.print("{\"resultado\":\"error\",\"mensaje\":\"Error general\"}");
+            String codiDocente = request.getParameter("codiDocente");
+
+            PanelTutorDAO ptDAO = new PanelTutorDAO("a");
+            String resultado = ptDAO.existeTutoriaXFacultad(codiDocente);
+
+            JSONObject jsonobj = new JSONObject(resultado);
+
+            if (jsonobj.getString("Resultado").equals("ok")) {
+               
+                HttpSession sesion = request.getSession(true);
+                sesion.setAttribute("codigoDocente", codiDocente);
+                sesion.setAttribute("empr", "a");
+                 response.sendRedirect("paneltutor.html");
+                
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Código 403
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Acceso Denegado</title>");
+                out.println("<style>");
+                out.println("body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }");
+                out.println("h2 { color: red; }");
+                out.println("</style>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h2>¡Acceso Denegado!</h2>");
+                out.println("<p>No tienes permiso para acceder a este módulo.</p>");
+                 out.println("</body>");
+                out.println("</html>");
             }
+
         }
     }
 

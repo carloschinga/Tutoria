@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package servlet;
 
 import dao.DocenteJpaController;
@@ -15,97 +11,77 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
- * @author shaho
+ * Servlet para la gestión de docentes.
  */
 @WebServlet(name = "DocentesCRUD", urlPatterns = {"/DocentesCRUD"})
 public class DocentesCRUD extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+        
         try (PrintWriter out = response.getWriter()) {
-            try {
-                HttpSession session = request.getSession(true);
-                Object emprObj = session.getAttribute("empr");
-                if (emprObj != null) {
-                    String empr = emprObj.toString();
-                    String rol = session.getAttribute("director").toString();
-                    String opcion = request.getParameter("opcion");
-                    DocenteJpaController dao = new DocenteJpaController(empr);
+            HttpSession session = request.getSession(false); // No crea una nueva sesión si no existe
+            
+            if (session == null || session.getAttribute("empr") == null) {
+                out.print("{\"resultado\":\"error\",\"mensaje\":\"nosession\"}");
+                return;
+            }
 
-                    switch (opcion) {
-                        case "1": //Lista de docentes por facultad
-                            if ("ok".equals(rol)) {
-                                String facultad = session.getAttribute("facultad").toString();
-                                out.print("{\"data\":" + dao.BuscarFacultad(facultad) + ",\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
-                            break;
-                        case "2":
-                            String codigoDocente=session.getAttribute("codigoDocente").toString();
-                            String nombreDocente=dao.Buscarxcodigo(codigoDocente);
-                            out.print("{\"resultado\":\"ok\",\"nombre\":\""+nombreDocente+"\"}");
-                            break;
-                        default:
-                            out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");
-                    }
-                } else {
-                    out.print("{\"resultado\":\"error\",\"mensaje\":\"nosession\"}");
+            try {
+                String empr = session.getAttribute("empr").toString();
+                String opcion = request.getParameter("opcion");
+                DocenteJpaController dao = new DocenteJpaController(empr);
+
+                switch (opcion) {
+                    case "1": // Lista de docentes por facultad
+                       
+                            String facultad = session.getAttribute("facultad") != null ? session.getAttribute("facultad").toString() : "";
+                            out.print("{\"data\":" + dao.BuscarFacultad(facultad) + ",\"resultado\":\"ok\"}");
+                       
+                        break;
+
+                    case "2": // Buscar docente por código
+                        Object codigoDocenteObj = session.getAttribute("codigoDocente");
+                        if (codigoDocenteObj == null) {
+                            out.print("{\"resultado\":\"error\",\"mensaje\":\"codigoDocente no encontrado en la sesión\"}");
+                            return;
+                        }
+                        
+                        String codigoDocente = codigoDocenteObj.toString();
+                        String nombreDocente = dao.Buscarxcodigo(codigoDocente);
+
+                        if (nombreDocente == null || nombreDocente.isEmpty()) {
+                            out.print("{\"resultado\":\"error\",\"mensaje\":\"Docente no encontrado\"}");
+                        } else {
+                            out.print("{\"resultado\":\"ok\",\"nombre\":\"" + nombreDocente + "\"}");
+                        }
+                        break;
+
+                    default:
+                        out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");
+                        break;
                 }
             } catch (Exception e) {
-                out.print("{\"resultado\":\"error\",\"mensaje\":\"Error general\"}");
+                out.print("{\"resultado\":\"error\",\"mensaje\":\"Error general: " + e.getMessage() + "\"}");
             }
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet para la gestión de docentes.";
+    }
 }

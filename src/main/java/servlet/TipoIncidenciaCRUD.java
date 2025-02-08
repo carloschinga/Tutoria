@@ -39,18 +39,13 @@ public class TipoIncidenciaCRUD extends HttpServlet {
                 Object emprObj = session.getAttribute("empr");
                 if (emprObj != null) {
                     String empr = emprObj.toString();
-                    String rol = session.getAttribute("docente").toString();
-                    String opcion = request.getParameter("opcion");
+                     String opcion = request.getParameter("opcion");
                     TipoIncidenciaJpaController dao = new TipoIncidenciaJpaController(empr);
 
                     switch (opcion) {
                         case "1": //Lista de docentes por facultad
-                            if ("ok".equals(rol)) {
-                                out.print("{\"data\":" + dao.listar() + ",\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
-                            break;
+                                 out.print("{\"data\":" + dao.listar() + ",\"resultado\":\"ok\"}");
+                             break;
                         default:
                             out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");
                     }

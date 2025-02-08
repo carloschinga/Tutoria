@@ -36,7 +36,7 @@ public class SemestreAcademicoCRUD extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             try {
-                HttpSession session = request.getSession(true);
+                HttpSession session = request.getSession(false);
                 Object emprObj = session.getAttribute("empr");
                 if (emprObj != null) {
                     String opcion = request.getParameter("opcion");

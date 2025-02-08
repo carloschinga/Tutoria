@@ -46,13 +46,11 @@ public class IncidenciasTutoriaCRUD extends HttpServlet {
                 Object emprObj = session.getAttribute("empr");
                 if (emprObj != null) {
                     String empr = emprObj.toString();
-                    String rol = session.getAttribute("docente").toString();
                     String opcion = request.getParameter("opcion");
                     IncidenciasTutoriaJpaController dao = new IncidenciasTutoriaJpaController(empr);
 
                     switch (opcion) {
                         case "1": //Agregar
-                            if ("ok".equals(rol)) {
                                 StringBuilder sb = new StringBuilder();
                                 try (BufferedReader reader = request.getReader()) {
                                     String line;
@@ -82,38 +80,31 @@ public class IncidenciasTutoriaCRUD extends HttpServlet {
                                 } else {
                                     out.print("{\"resultado\":\"error\",\"mensaje\":\"errsql\"}");
                                 }
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
                             break;
                         case "2": //Lista las incidencias de un alumno
-                            if ("ok".equals(rol)) {
-                                String coduniv = request.getParameter("coduniv");
-                                String codsede = request.getParameter("codsede");
+                                  coduniv = request.getParameter("coduniv");
+                                 codsede = request.getParameter("codsede");
 
                                 out.print("{\"data\":" + dao.ListarIncidencias(coduniv, codsede) + ",\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                       
                             break;
                         case "3": //modificar
-                            if ("ok".equals(rol)) {
-                                StringBuilder sb = new StringBuilder();
+                                  sb = new StringBuilder();
                                 try (BufferedReader reader = request.getReader()) {
                                     String line;
                                     while ((line = reader.readLine()) != null) {
                                         sb.append(line);
                                     }
                                 }
-                                String body = sb.toString();
-                                JSONObject jsonObj = new JSONObject(body);
-                                String coduniv = request.getParameter("coduniv");
-                                String codsede = request.getParameter("codsede");
-                                String tipo = request.getParameter("tipo");
-                                String item = request.getParameter("item");
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                Object[] semestre = semesdao.obtenerSemestreActual();
-                                IncidenciasTutoriaPK objpk = new IncidenciasTutoriaPK(codsede, coduniv, (String) semestre[0], (Character) semestre[1], Integer.parseInt(item));
+                                 body = sb.toString();
+                                 jsonObj = new JSONObject(body);
+                                 coduniv = request.getParameter("coduniv");
+                                 codsede = request.getParameter("codsede");
+                                 tipo = request.getParameter("tipo");
+                                 item = Integer.parseInt(request.getParameter("item"));
+                                 semesdao = new SemestreAcademicoJpaController(empr);
+                                 semestre = semesdao.obtenerSemestreActual();
+                                IncidenciasTutoriaPK objpk = new IncidenciasTutoriaPK(codsede, coduniv, (String) semestre[0], (Character) semestre[1], item);
                                 IncidenciasTutoria obj = dao.findIncidenciasTutoria(objpk);
                                 String codigodocente = session.getAttribute("codigoDocente").toString();
                                 obj.setCodigoDocente(Integer.parseInt(codigodocente));
@@ -122,25 +113,20 @@ public class IncidenciasTutoriaCRUD extends HttpServlet {
                                 obj.setObservacion(URLDecoder.decode(jsonObj.getString("observacion"), "UTF-8"));
                                 dao.edit(obj);
                                 out.print("{\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                           
                             break;
                         case "4"://eliminar
-                            if ("ok".equals(rol)) {
-                                String coduniv = request.getParameter("coduniv");
-                                String codsede = request.getParameter("codsede");
-                                String item = request.getParameter("item");
-                                SemestreAcademicoJpaController semesdao = new SemestreAcademicoJpaController(empr);
-                                Object[] semestre = semesdao.obtenerSemestreActual();
-                                IncidenciasTutoriaPK objpk = new IncidenciasTutoriaPK(codsede, coduniv, (String) semestre[0], (Character) semestre[1], Integer.parseInt(item));
-                                IncidenciasTutoria obj = dao.findIncidenciasTutoria(objpk);
+                                 coduniv = request.getParameter("coduniv");
+                                 codsede = request.getParameter("codsede");
+                                 item = Integer.parseInt(request.getParameter("item"));
+                                 semesdao = new SemestreAcademicoJpaController(empr);
+                                 semestre = semesdao.obtenerSemestreActual();
+                                 objpk = new IncidenciasTutoriaPK(codsede, coduniv, (String) semestre[0], (Character) semestre[1], item);
+                                 obj = dao.findIncidenciasTutoria(objpk);
                                 obj.setEstado("N");
                                 dao.edit(obj);
                                 out.print("{\"resultado\":\"ok\"}");
-                            } else {
-                                out.print("{\"resultado\":\"error\",\"mensaje\":\"nopermiso\"}");
-                            }
+                           
                             break;
                         default:
                             out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");
