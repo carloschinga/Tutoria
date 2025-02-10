@@ -4,23 +4,25 @@
  */
 package servlet;
 
-import dao.PanelDirectorDAO;
+import com.google.gson.Gson;
+import dao.ReporteActividadesDirectorjpaController;
+import dto.ReporteActividad;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.json.JSONObject;
 
 /**
  *
- * @author USER
+ * @author san21
  */
-@WebServlet(name = "paneldirector", urlPatterns = {"/paneldirector"})
-public class PanelDirector extends HttpServlet {
+@WebServlet(name = "ReporteActividadesDirector", urlPatterns = {"/ReporteActividadesDirector"})
+public class ReporteActividadesDirector extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,45 +36,7 @@ public class PanelDirector extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-
-            String admLogin = request.getParameter("admLogin");
-            String codiFacu = request.getParameter("codiFacu");
-            String codidoce = request.getParameter("codiDocente");
-
-            PanelDirectorDAO pdDAO = new PanelDirectorDAO("a");
-            String resultado = pdDAO.existeDirectorTutoriaXFacultad(admLogin, codiFacu, codidoce);
-
-            JSONObject jsonobj = new JSONObject(resultado);
-
-            if (jsonobj.getString("Resultado").equals("ok")) {
-
-                HttpSession sesion = request.getSession(true);
-                sesion.setAttribute("director", admLogin);
-                sesion.setAttribute("facultad", codiFacu);
-                sesion.setAttribute("codigoDocente", codidoce);
-                sesion.setAttribute("empr", "a");
-                response.sendRedirect("paneldirector.html");
-
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Código 403
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Acceso Denegado</title>");
-                out.println("<style>");
-                out.println("body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }");
-                out.println("h2 { color: red; }");
-                out.println("</style>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h2>¡Acceso Denegado!</h2>");
-                out.println("<p>No tienes permiso para acceder a este módulo.</p>");
-                out.println("</body>");
-                out.println("</html>");
-            }
-
-        }
+       
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -87,7 +51,45 @@ public class PanelDirector extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        try {
+            HttpSession session = request.getSession(true);
+            if (session == null || session.getAttribute("empr") == null) {
+                response.getWriter().write("{\"resultado\":\"ERROR\", \"message\":\"No estás autenticado. Inicia sesión.\"}");
+                return;
+            }
+
+            // Obtener los parámetros de la solicitud
+            String codiAño = request.getParameter("anio");
+            String codiSemestre = request.getParameter("semestre");
+            String codidocente = request.getParameter("codidocente");
+
+            // Validar los parámetros
+            if (codiAño == null || codiSemestre == null || codidocente == null) {
+                response.getWriter().write("{\"resultado\":\"ERROR\", \"message\":\"Faltan parámetros para generar el reporte.\"}");
+                return;
+            }
+
+            // Obtener la base de datos desde la sesión
+            String empr = (String) session.getAttribute("empr");
+            if (empr == null) {
+                response.getWriter().write("{\"resultado\":\"ERROR\", \"message\":\"No se ha especificado con qué BD trabajar.\"}");
+                return;
+            }
+
+            // Instanciar el DAO y obtener datos
+            ReporteActividadesDirectorjpaController reporteActividadDAO = new ReporteActividadesDirectorjpaController(empr);
+            List<ReporteActividad> listaReportes = reporteActividadDAO.obtenerActividadesPorSemestre(codiAño,codiSemestre,codidocente);
+
+            
+
+            // Enviar respuesta en formato JSON
+            out.println("{\"resultado\":\"OK\", \"lista\":" + new Gson().toJson(listaReportes) + "}");
+        } catch (IOException e) {
+            out.println("{\"resultado\":\"ERROR\", \"message\":\"" + e.getMessage() + "\"}");
+        }
+
     }
 
     /**

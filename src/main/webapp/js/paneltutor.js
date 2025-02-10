@@ -2,6 +2,7 @@ $(document).ready(function () {
     document.getElementById('btnCerrarSesion').addEventListener('click', function () {
         document.getElementById('lbldocente').style.display = 'none';
         document.getElementById('cardDdetalle').style.display = 'none';
+        $("#mensajeAccesoDenegado").show();
     });
     $.getJSON("DocentesCRUD", {opcion: 2, _: new Date().getTime()}, function (data) {
         console.log("Respuesta del servidor:", data);
@@ -36,6 +37,9 @@ $(document).ready(function () {
     });
     $("#mnulistaReporteincidencias").click(function () {
         $("#cardDdetalle").load("reporteincidencias.html");
+    });
+    $("#mnuIncidencias").click(function () {
+        $("#cardDdetalle").load("incidencias.html");
     });
 
 

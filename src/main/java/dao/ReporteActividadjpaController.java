@@ -32,8 +32,8 @@ public class ReporteActividadjpaController extends JpaPadre {
                 + "INNER JOIN AsistenciaTutoria ast ON ast.CodigoDocente = act.CodigoDocente "
                 + "INNER JOIN Docente d ON d.CodigoDocente = ast.CodigoDocente "
                 + "INNER JOIN Sujeto s ON s.CodigoSujeto = d.CodigoSujeto "
-                + "WHERE act.Anio = act.Anio "
-                + "AND act.Semestre = act.Semestre;";
+                + "WHERE act.Anio = ? "
+                + "AND act.Semestre = ?;";
 
         EntityManager em = getEntityManager();
         try {

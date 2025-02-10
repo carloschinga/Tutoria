@@ -222,7 +222,7 @@ function addTable(doc, data,params) {
 }
 
 function saveFile(doc) {
-    const fileName = `REPORTE_ALUMNOS_SIN_TUTOR.pdf`;
+    const fileName = `REPORTE_DE_TUTORES.pdf`;
     doc.save(fileName);
 }
 function seleccionarSemestreActual() {

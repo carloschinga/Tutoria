@@ -1,6 +1,8 @@
 $(document).ready(function () {
     document.getElementById('btnCerrarSesion').addEventListener('click', function () {
         document.getElementById('cardDdetalle').style.display = 'none';
+        $("#mensajeAccesoDenegado").show();
+
     });
     $("#cardDdetalle").load("asignaciontutores.html");
 
@@ -18,5 +20,14 @@ $(document).ready(function () {
     });
     $("#mnubusquedaportutor").click(function () {
         $("#cardDdetalle").load("busquedaportutor.html");
+    });
+    $("#mnuReporteActividades").click(function () {
+        $("#cardDdetalle").load("reporteactividaddirector.html");
+    });
+    $("#mnulistaReporteAsistencias").click(function () {
+        $("#cardDdetalle").load("reporteasistenciasdirector.html");
+    });
+    $("#mnulistaReporteincidencias").click(function () {
+        $("#cardDdetalle").load("ReporteIncidenciasDirector.html");
     });
 });
