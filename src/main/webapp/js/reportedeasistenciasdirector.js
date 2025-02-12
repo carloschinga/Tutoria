@@ -1,7 +1,8 @@
 $(document).ready(function () {
     // Cargar los semestres
+    // Cargar los semestres
     $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
-        if (data.resultado === "ok") {
+        if (data && data.resultado === "ok") {
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
             $.each(data.semestres, function (key, value) {
@@ -9,33 +10,32 @@ $(document).ready(function () {
                 semestres.append('<option value="' + value.CodigoSemestre + '">' + semestre + '</option>');
             });
             seleccionarSemestreActual();
-
         } else {
             alert("Error al cargar los semestres.");
         }
     });
-    $('#cmbSemestreAcademico').change(function () {
-        var semestreSeleccionado = $(this).val();  // Obtiene el valor seleccionado
-        if (semestreSeleccionado) {
-            cargarSesion(semestreSeleccionado);
+
+    // Evento para cargar sesiones al cambiar semestre o docente
+    $('#cmbSemestreAcademico, #cmbDocentes').change(function () {
+        var semestreSeleccionado = $('#cmbSemestreAcademico').val();
+        var docenteSeleccionado = $('#cmbDocentes').val();
+        if (semestreSeleccionado && docenteSeleccionado) {
+            cargarSesion(semestreSeleccionado, docenteSeleccionado);
         } else {
-            console.log('No se ha seleccionado ningún semestre');
+            console.log('Faltan seleccionar datos (semestre/docente)');
         }
     });
+
+    // Cargar docentes
     $.getJSON("DocentesCRUD", {opcion: 1}, function (data) {
-        if (data.resultado === "ok") {
-            let Docentes = $('#cmbDocentes');
-            Docentes.html('<option value=""selected disabled>Selecciona un docente</option>');
-            listadocentes = data.data;
-            $.each(listadocentes, function (key, value) {
-                Docentes.append('<option value="' + value.CodigoDocente + '">' + value.Nombres + '</option>');
+        if (data && data.resultado === "ok") {
+            let docentes = $('#cmbDocentes');
+            docentes.html('<option value="" selected disabled>Selecciona un docente</option>');
+            $.each(data.data, function (key, value) {
+                docentes.append('<option value="' + value.CodigoDocente + '">' + value.Nombres + '</option>');
             });
         } else {
-            if (data.mensaje === 'nopermiso') {
-                alert("Error: No tienes permiso para acceder aqui");
-            } else {
-                alert("Error general: No se pudo cargar los docentes.");
-            }
+            alert(data.mensaje === 'nopermiso' ? "Error: No tienes permiso para acceder aquí" : "Error general: No se pudo cargar los docentes.");
         }
     });
 
@@ -87,7 +87,7 @@ $(document).ready(function () {
                 anio: codiAño,
                 semestre: codiSemestre,
                 sesion: sesion,
-                codigoDocente:Docentesseleccionado 
+                codigoDocente: Docentesseleccionado
             },
             success: function (data) {
                 console.log("Respuesta del servidor:", data);
@@ -98,7 +98,7 @@ $(document).ready(function () {
                         semestre: codiSemestre,
                         sesion: sesion,
                         tutorNombre: data.lista[0].Tutor,
-                        codigoDocente:Docentesseleccionado
+                        codigoDocente: Docentesseleccionado
                     });
                 } else {
                     alert("No se encontraron asistencias para este semestre,con el tutor seleccionado.");
@@ -116,9 +116,9 @@ $(document).ready(function () {
 });
 
 
-function cargarSesion(codiSeme) {
+function cargarSesion(codiSeme, codigoDoc) {
 
-    $.getJSON("SesionCRUD", {opcion: 1, semestre: codiSeme}, function (data) {
+    $.getJSON("SesionCRUD", {opcion: 2, semestre: codiSeme, codigoDocente: codigoDoc}, function (data) {
         try {
             let sesionSelect = $('#cmbSesion');
             sesionSelect.empty().append('<option value="" selected disabled>Selecciona una Sesión</option>');

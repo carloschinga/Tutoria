@@ -48,4 +48,31 @@ public class SesionjpaController extends JpaPadre {
             }
         }
     }
+    public String obtenerSesionesUnicasdocente(String codigoDocente, String codiSeme) {
+        EntityManager em = getEntityManager();
+        try {
+            String queryString = "select Sesion,upper( Actividad ) \n"
+                    + "from ActividadTutoria acti \n"
+                    + "inner join SemestreAcademico seme on   seme.CodigoSemestre=?  and acti.CodigoDocente=? \n"
+                    + "and acti.Anio=seme.Anio and acti.Semestre=seme.Semestre";
+            Query query = em.createNativeQuery(queryString);
+            query.setParameter(1, codiSeme);
+            query.setParameter(2, codigoDocente); // Usar el parámetro del método
+            List<Object[]> resultados = query.getResultList();
+            JSONArray jsonArray = new JSONArray();
+            for (Object[] fila : resultados) {
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("Sesion", fila[0]);
+                jsonObj.put("Actividad", fila[1]);
+                jsonArray.put(jsonObj);
+            }
+            return jsonArray.toString();
+        } catch (Exception e) {
+            return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
 }

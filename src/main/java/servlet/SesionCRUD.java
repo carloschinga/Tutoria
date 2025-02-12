@@ -33,7 +33,9 @@ public class SesionCRUD extends HttpServlet {
                         out.print(dao.obtenerSesionesUnicas(codigoDoc,codiSeme));
                         break;
                     case "2": // Otras posibles operaciones futuras
-                        out.print("{\"resultado\":\"error\",\"mensaje\":\"Operacion no implementada\"}");
+                       String codiSemetre= request.getParameter("semestre");
+                        String codigoDocente= request.getParameter("codigoDocente");
+                        out.print(dao.obtenerSesionesUnicasdocente(codigoDocente,codiSemetre));
                         break;
                     default:
                         out.print("{\"resultado\":\"error\",\"mensaje\":\"noproce\"}");

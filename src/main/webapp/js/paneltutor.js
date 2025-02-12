@@ -1,9 +1,37 @@
 $(document).ready(function () {
-    document.getElementById('btnCerrarSesion').addEventListener('click', function () {
-        document.getElementById('lbldocente').style.display = 'none';
-        document.getElementById('cardDdetalle').style.display = 'none';
-        $("#mensajeAccesoDenegado").show();
-    });
+    // Asigna evento al botón de cerrar sesión
+    $("#btnCerrarSesion").click(cerrarSesion);
+
+    function cerrarSesion() {
+        fetch('LogoutServlet', {
+            method: 'GET',
+            credentials: 'same-origin'
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === "success") {
+                        document.getElementById('cardDdetalle').style.display = 'none';
+                        $("#mensajeAccesoDenegado").show();
+                        setTimeout(() => {
+                            window.close(); // Intentar cerrar la pestaña
+                            if (!window.closed) {
+                                alert("Cierre la pestaña manualmente.");
+                            }
+                        }, 2000);
+                    } else {
+                        alert("Error al cerrar sesión. Inténtelo de nuevo.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cerrar sesión:", error);
+                    alert("Ocurrió un error al cerrar sesión.");
+                });
+    }
     $.getJSON("DocentesCRUD", {opcion: 2, _: new Date().getTime()}, function (data) {
         console.log("Respuesta del servidor:", data);
 
