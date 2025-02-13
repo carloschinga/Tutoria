@@ -42,8 +42,7 @@ public class ReporteActividadjpaController extends JpaPadre {
                 + "INNER JOIN Docente d ON d.CodigoDocente = act.CodigoDocente "
                 + "INNER JOIN Sujeto s ON s.CodigoSujeto = d.CodigoSujeto "
                 + "WHERE act.Anio = ? "
-                + "AND act.Semestre = ? "
-                + "AND act.CodigoDocente = ?;";
+                + "AND act.Semestre = ?;";
 
         EntityManager em = getEntityManager();
         try {
@@ -52,7 +51,6 @@ public class ReporteActividadjpaController extends JpaPadre {
             // Establecer los parámetros
             query.setParameter(1, anio);
             query.setParameter(2, semestre);
-            query.setParameter(3, codiDocente);
 
             // Ejecutar la consulta y convertir los resultados en objetos DTO
             List<Object[]> resultList = query.getResultList();
@@ -62,14 +60,14 @@ public class ReporteActividadjpaController extends JpaPadre {
             for (Object[] row : resultList) {
                 String fechaFormateada = null;
                 if (row[3] != null) {
-                    Timestamp timestamp = (Timestamp) row[5];
+                    Timestamp timestamp = (Timestamp) row[3];
                     fechaFormateada = dateFormat.format(timestamp);
                 }
                 ReporteActividad reporte = new ReporteActividad(
                         row[0] != null ? row[0].toString() : null, // CodigoUniversitario
                         row[1] != null ? row[1].toString() : null, // Apellidos
                         row[2] != null ? row[2].toString() : null, // Alumno
-                        row[3] != null ? row[3].toString() : null, // Observacion
+                        row[4] != null ? row[4].toString() : null, // Observacion
                         
                         fechaFormateada // Fecha
                 );

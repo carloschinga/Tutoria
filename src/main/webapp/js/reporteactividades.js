@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Cargar los semestres
-    $.getJSON("SemestreAcademicoCRUD", { opcion: 2 }, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 2}, function (data) {
         if (data.resultado === "ok") {
             let semestres = $('#cmbSemestreAcademico');
             semestres.empty().append('<option value="" selected disabled>Selecciona un Semestre</option>');
@@ -36,19 +36,19 @@ $(document).ready(function () {
 
         // Mostrar mensaje de carga mientras se procesa la solicitud
         const loadingMessage = $("<div>")
-            .attr("id", "loadingMessage")
-            .css({
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                background: "#fff",
-                padding: "10px 20px",
-                borderRadius: "5px",
-                boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-                zIndex: 1000
-            })
-            .text("Generando reporte, por favor espera...");
+                .attr("id", "loadingMessage")
+                .css({
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    background: "#fff",
+                    padding: "10px 20px",
+                    borderRadius: "5px",
+                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+                    zIndex: 1000
+                })
+                .text("Generando reporte, por favor espera...");
         $('body').append(loadingMessage);
 
         // Realizar solicitud AJAX al servlet ReporteActividad
@@ -61,7 +61,7 @@ $(document).ready(function () {
                 semestre: codiSemestre
             },
             success: function (data) {
-                 if (data.resultado === "OK" && data.lista.length > 0) {
+                if (data.resultado === "OK" && data.lista.length > 0) {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,
@@ -84,7 +84,7 @@ $(document).ready(function () {
 });
 
 function exportToPDF(data, params) {
-    const { jsPDF } = window.jspdf;
+    const {jsPDF} = window.jspdf;
     const doc = new jsPDF();
 
     // Añadir la cabecera
@@ -136,12 +136,15 @@ function addHeader(doc, params) {
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "Actividad", "Lugar"];
+    const headers = ["#", "tipo", "Actividad", "Lugar", "Fecha", "Tutor"];
     const body = data.map((row, index) => [
-        (index + 1).toString(),
-        row.actividad,  // Actividad
-        row.lugar
-    ]);
+            (index + 1).toString(),
+            row.tipo, // Actividad
+            row.actividad, // Actividad
+            row.lugar,
+            row.fecha,
+            row.tutor
+        ]);
 
     const firstPageStartY = 55;
     let currentY = firstPageStartY;
@@ -149,7 +152,7 @@ function addTable(doc, data, params) {
     doc.autoTable({
         head: [headers],
         body: body,
-        startY: currentY,
+        startY: 55,
         headStyles: {
             fillColor: [0, 68, 136],
             textColor: 255,
@@ -158,6 +161,14 @@ function addTable(doc, data, params) {
         },
         bodyStyles: {
             fontSize: 10
+        },
+        columnStyles: {
+            0: {cellWidth: 10}, // Columna "#"
+            1: {cellWidth: 30}, // Columna "Tipo"
+            2: {cellWidth: 30}, // Columna "Actividad"
+            3: {cellWidth: 30}, // Columna "Lugar"
+            4: {cellWidth: 39}, // Columna "Fecha"
+            5: {cellWidth: 30}    // Columna "Tutor"
         },
         margin: {
             top: 55,
@@ -178,7 +189,7 @@ function saveFile(doc) {
 }
 
 function seleccionarSemestreActual() {
-    $.getJSON("SemestreAcademicoCRUD", { opcion: 1 }, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
         if (data.resultado === "ok") {
             let semestreActual = data.semestre.split(":")[1].trim();
             $("#cmbSemestreAcademico option").each(function () {
