@@ -55,7 +55,7 @@ public class ReporteActividadjpaController extends JpaPadre {
             // Ejecutar la consulta y convertir los resultados en objetos DTO
             List<Object[]> resultList = query.getResultList();
             List<ReporteActividad> reporteList = new ArrayList<>();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy hh:mm a");
 
             for (Object[] row : resultList) {
                 String fechaFormateada = null;

@@ -136,14 +136,13 @@ function addHeader(doc, params) {
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "tipo", "Actividad", "Lugar", "Fecha", "Tutor"];
+    const headers = ["#", "tipo", "Actividad", "Lugar", "Fecha"];
     const body = data.map((row, index) => [
             (index + 1).toString(),
             row.tipo, // Actividad
             row.actividad, // Actividad
             row.lugar,
-            row.fecha,
-            row.tutor
+            row.fecha
         ]);
 
     const firstPageStartY = 55;
@@ -164,11 +163,11 @@ function addTable(doc, data, params) {
         },
         columnStyles: {
             0: {cellWidth: 10}, // Columna "#"
-            1: {cellWidth: 30}, // Columna "Tipo"
-            2: {cellWidth: 30}, // Columna "Actividad"
-            3: {cellWidth: 30}, // Columna "Lugar"
-            4: {cellWidth: 39}, // Columna "Fecha"
-            5: {cellWidth: 30}    // Columna "Tutor"
+            1: {cellWidth: 40}, // Columna "Tipo"
+            2: {cellWidth: 40}, // Columna "Actividad"
+            3: {cellWidth: 40}, // Columna "Lugar"
+            4: {cellWidth: 42}, // Columna "Fecha"
+            5: {cellWidth: 38}    // Columna "Tutor"
         },
         margin: {
             top: 55,
