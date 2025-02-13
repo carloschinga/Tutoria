@@ -8,10 +8,8 @@ import dao.exceptions.NonexistentEntityException;
 import dao.exceptions.PreexistingEntityException;
 import dto.Tutoria;
 import dto.TutoriaPK;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.ParameterMode;
@@ -19,6 +17,7 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -62,7 +61,7 @@ public class TutoriaJpaController extends JpaPadre {
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {
@@ -94,13 +93,12 @@ public class TutoriaJpaController extends JpaPadre {
 
             // Configurar el parámetro XML en la consulta del procedimiento almacenado
             query.setParameter("XmlData", xml);
-            query.setParameter("docente", Integer.parseInt(docente));
+            query.setParameter("docente", Integer.valueOf(docente));
 
             // Ejecutar el procedimiento almacenado
             query.execute();
             result = "S"; // Éxito
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException | JSONException e) {
             result = "E"; // Error
         } finally {
             if (em != null) {
@@ -136,8 +134,7 @@ public class TutoriaJpaController extends JpaPadre {
             // Ejecutar el procedimiento almacenado
             query.execute();
             result = "S"; // Éxito
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JSONException e) {
             result = "E"; // Error
         } finally {
             if (em != null) {

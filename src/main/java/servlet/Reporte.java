@@ -10,7 +10,6 @@ import dto.ReporteTutoresParametro;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

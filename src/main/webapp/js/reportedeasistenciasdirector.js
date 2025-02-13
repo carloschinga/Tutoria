@@ -22,7 +22,7 @@ $(document).ready(function () {
         if (semestreSeleccionado && docenteSeleccionado) {
             cargarSesion(semestreSeleccionado, docenteSeleccionado);
         } else {
-            console.log('Faltan seleccionar datos (semestre/docente)');
+            alert('Faltan seleccionar datos (semestre/docente)');
         }
     });
 
@@ -46,7 +46,7 @@ $(document).ready(function () {
         let Docentesseleccionado = $('#cmbDocentes').val();
 
         if (!semestreSeleccionado || !sesion) {
-            alert("Por favor, selecciona un semestre.");
+            alert("Por favor, selecciona un semestre, tutor y sesión.");
             return;
         }
 
@@ -90,8 +90,7 @@ $(document).ready(function () {
                 codigoDocente: Docentesseleccionado
             },
             success: function (data) {
-                console.log("Respuesta del servidor:", data);
-                if (data.resultado === "OK" && data.lista.length > 0) {
+                 if (data.resultado === "OK" && data.lista.length > 0) {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,

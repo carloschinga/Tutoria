@@ -78,6 +78,8 @@ $(document).ready(function () {
 
         // Realizamos la petición AJAX
         $.getJSON("BuscarTutor", params, function (data) {
+            
+            console.log(data);
             let tablaResultados = $('#tablaResultados');
             let tbody = tablaResultados.find('tbody');
             tbody.empty(); // Limpiamos la tabla
@@ -94,6 +96,7 @@ $(document).ready(function () {
                 });
                 tablaResultados.removeClass('d-none'); // Mostramos la tabla
             } else {
+                alert("No hay datos");
                 $.fn.mostrarPopup("No se encontraron resultados.");
                 tablaResultados.addClass('d-none'); // Ocultamos la tabla si no hay resultados
             }
@@ -120,6 +123,7 @@ function seleccionarSemestreActual() {
                 }
             });
         } else {
+            Alert("Error al obtener el semestre actual.");
             console.error("Error al obtener el semestre actual.");
         }
     });

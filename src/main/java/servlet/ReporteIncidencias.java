@@ -49,7 +49,7 @@ public class ReporteIncidencias extends HttpServlet {
 
             // Enviar respuesta en formato JSON
             out.println("{\"resultado\":\"OK\", \"lista\":" + new Gson().toJson(listaReportes) + "}");
-        } catch (Exception e) {
+        } catch (IOException e) {
             out.println("{\"resultado\":\"ERROR\", \"message\":\"" + e.getMessage() + "\"}");
         }
     }

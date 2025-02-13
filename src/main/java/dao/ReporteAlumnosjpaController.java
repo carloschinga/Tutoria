@@ -21,6 +21,7 @@ public class ReporteAlumnosjpaController extends JpaPadre {
     }
 
     // Método para obtener el EntityManager desde la configuración de persistence.xml
+    @Override
     public EntityManager getEntityManager() {
         return super.getEntityManager(); // Se aprovecha el EntityManager proporcionado por JpaPadre
     }
@@ -66,16 +67,20 @@ public class ReporteAlumnosjpaController extends JpaPadre {
 
         // Obtener el EntityManager de JPA
         EntityManager em = getEntityManager();
-        // Preparar la consulta usando JPA
-        Query nativeQuery = em.createNativeQuery(query);
+        try {
+            // Preparar la consulta usando JPA
+            Query nativeQuery = em.createNativeQuery(query);
 
-        // Setear los parámetros de la consulta
-        nativeQuery.setParameter(1, "%" + params.getCodiEscuela() + "%");  // Asumí que codiEscuela es un substring
-        nativeQuery.setParameter(2, params.getCodiAño());
-        nativeQuery.setParameter(3, params.getCodiSemestre());
-        nativeQuery.setParameter(4, params.getCodigoTutor()); // Se agrega el parámetro del tutor
+            // Setear los parámetros de la consulta
+            nativeQuery.setParameter(1, "%" + params.getCodiEscuela() + "%");  // Asumí que codiEscuela es un substring
+            nativeQuery.setParameter(2, params.getCodiAño());
+            nativeQuery.setParameter(3, params.getCodiSemestre());
+            nativeQuery.setParameter(4, params.getCodigoTutor()); // Se agrega el parámetro del tutor
 
-        // Ejecutar la consulta y obtener la lista de resultados
-        return nativeQuery.getResultList();  // Devuelve una lista de resultados
+            // Ejecutar la consulta y obtener la lista de resultados
+            return nativeQuery.getResultList();  // Devuelve una lista de resultados
+        } finally {
+            em.close();
+        }
     }
 }

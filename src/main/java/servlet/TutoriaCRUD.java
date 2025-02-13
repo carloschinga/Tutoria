@@ -100,7 +100,7 @@ public class TutoriaCRUD extends HttpServlet {
                 } else {
                     out.print("{\"resultado\":\"error\",\"mensaje\":\"nosession\"}");
                 }
-            } catch (Exception e) {
+            } catch (IOException | NumberFormatException e) {
                 out.print("{\"resultado\":\"error\",\"mensaje\":\"Error general\"}");
             }
         }

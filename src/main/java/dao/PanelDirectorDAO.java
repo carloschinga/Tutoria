@@ -3,6 +3,7 @@ package dao;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PanelDirectorDAO extends JpaPadre {
@@ -47,7 +48,7 @@ public class PanelDirectorDAO extends JpaPadre {
 
             return json.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {

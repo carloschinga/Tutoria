@@ -8,10 +8,8 @@ import dao.exceptions.NonexistentEntityException;
 import dao.exceptions.PreexistingEntityException;
 import dto.ActividadTutoria;
 import dto.ActividadTutoriaPK;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
@@ -19,6 +17,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -75,7 +74,7 @@ public class ActividadTutoriaJpaController extends JpaPadre {
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {

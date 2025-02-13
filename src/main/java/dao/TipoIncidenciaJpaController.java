@@ -6,15 +6,14 @@ package dao;
 
 import dao.exceptions.NonexistentEntityException;
 import dto.TipoIncidencia;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -41,7 +40,7 @@ public class TipoIncidenciaJpaController extends JpaPadre{
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {

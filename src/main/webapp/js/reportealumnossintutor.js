@@ -60,7 +60,7 @@ function addHeader(doc, params) {
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "Nombre", "Código Universitario", "Ciclo"];
+    const headers = ["#", "Nombre Y Apellidos", "Código Universitario", "Ciclo"];
 
     // Crear el cuerpo de la tabla con el contador
     const body = data.map((row, index) => [
@@ -200,8 +200,7 @@ $(document).ready(function () {
                 codiSemestre: codiSemestre
             },
             beforeSend: function () {
-                console.log("Procesando solicitud para generar el reporte...");
-            },
+             },
             success: function (data) {
                 if (!data.lista || data.lista.length === 0) {
                     alert("No se encontraron datos para el reporte.");

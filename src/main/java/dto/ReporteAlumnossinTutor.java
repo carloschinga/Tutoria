@@ -8,7 +8,6 @@ package dto;
 public class ReporteAlumnossinTutor {
 
     private String codigoUniversitario;
-    private String apellidos;
     private String nombres;
     private String ciclo;
 
@@ -17,9 +16,8 @@ public class ReporteAlumnossinTutor {
     }
 
     // Constructor con todos los campos
-    public ReporteAlumnossinTutor(String codigoUniversitario, String apellidos, String nombres, String ciclo) {
+    public ReporteAlumnossinTutor(String codigoUniversitario, String nombres, String ciclo) {
         this.codigoUniversitario = codigoUniversitario;
-        this.apellidos = apellidos;
         this.nombres = nombres;
         this.ciclo = ciclo;
     }
@@ -31,14 +29,6 @@ public class ReporteAlumnossinTutor {
 
     public void setCodigoUniversitario(String codigoUniversitario) {
         this.codigoUniversitario = codigoUniversitario;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
     }
 
     public String getNombres() {
@@ -61,7 +51,6 @@ public class ReporteAlumnossinTutor {
     public String toString() {
         return "ReportedeAlumnosSinTutor{" +
                 "codigoUniversitario='" + codigoUniversitario + '\'' +
-                ", apellidos='" + apellidos + '\'' +
                 ", nombres='" + nombres + '\'' +
                 ", ciclo='" + ciclo + '\'' +
                 '}';

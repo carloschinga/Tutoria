@@ -164,11 +164,9 @@ $(document).ready(function () {
                 nombreTutor: nombreDocente
             },
             beforeSend: function () {
-                console.log("Procesando solicitud para generar el reporte...");
-            },
+              },
             success: function (data) {
-                console.log(data);
-
+    
                 // Pasar los datos y los parámetros al generador de PDF
                 exportToPDF(data.lista, {
                     escuela: escuela,

@@ -69,7 +69,7 @@ $(document).ready(function () {
     $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
-            console.log(data.semestre);
+           
         } else {
             if (data.mensaje === 'nopermiso') {
                 alert("Error: No tienes permiso para acceder aqui");
@@ -313,7 +313,7 @@ $(document).ready(function () {
 
         if (datos.length > 0) {
             if (sesion !== null && sesion !== undefined && sesion !== "") {
-                console.log(datos);
+             
                 $.ajax({
                     url: "AsistenciaTutoriaCRUD?opcion=3&sesion=" + sesion,
                     type: "POST",

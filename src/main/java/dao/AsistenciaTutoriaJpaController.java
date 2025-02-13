@@ -8,10 +8,8 @@ import dao.exceptions.NonexistentEntityException;
 import dao.exceptions.PreexistingEntityException;
 import dto.AsistenciaTutoria;
 import dto.AsistenciaTutoriaPK;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.ParameterMode;
@@ -19,6 +17,7 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -65,7 +64,7 @@ public class AsistenciaTutoriaJpaController extends JpaPadre {
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {
@@ -107,7 +106,7 @@ public class AsistenciaTutoriaJpaController extends JpaPadre {
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {
@@ -146,7 +145,7 @@ public class AsistenciaTutoriaJpaController extends JpaPadre {
 
             return jsonObj.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e + "\"}";
         } finally {
             if (em != null) {
@@ -181,16 +180,15 @@ public class AsistenciaTutoriaJpaController extends JpaPadre {
 
             // Configurar los parámetros del procedimiento almacenado
             query.setParameter("XmlData", xml);
-            query.setParameter("docente", Integer.parseInt(docente));
+            query.setParameter("docente", Integer.valueOf(docente));
             query.setParameter("anio", anio);
             query.setParameter("Semestre", semestre);
-            query.setParameter("sesion", Integer.parseInt(sesion));
+            query.setParameter("sesion", Integer.valueOf(sesion));
 
             // Ejecutar el procedimiento almacenado
             query.execute();
             result = "S"; // Éxito
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException | JSONException e) {
             result = "E"; // Error
         } finally {
             if (em != null) {
@@ -226,16 +224,15 @@ public class AsistenciaTutoriaJpaController extends JpaPadre {
 
             // Configurar los parámetros del procedimiento almacenado
             query.setParameter("XmlData", xml);
-            query.setParameter("docente", Integer.parseInt(docente));
+            query.setParameter("docente", Integer.valueOf(docente));
             query.setParameter("anio", anio);
             query.setParameter("Semestre", semestre);
-            query.setParameter("sesion", Integer.parseInt(sesion));
+            query.setParameter("sesion", Integer.valueOf(sesion));
 
             // Ejecutar el procedimiento almacenado
             query.execute();
             result = "S"; // Éxito
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException | JSONException e) {
             result = "E"; // Error
         } finally {
             if (em != null) {

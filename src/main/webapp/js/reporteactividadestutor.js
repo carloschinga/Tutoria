@@ -78,8 +78,7 @@ $(document).ready(function () {
                 codidocente:Docentesseleccionado
             },
             success: function (data) {
-                console.log("Respuesta del servidor:", data);
-                if (data.resultado === "OK" && data.lista.length > 0) {
+                 if (data.resultado === "OK" && data.lista.length > 0) {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,
@@ -155,20 +154,23 @@ function addHeader(doc, params) {
 }
 
 function addTable(doc, data, params) {
-    const headers = ["#", "Actividad", "Lugar"];
+    const headers = ["#","tipo","Actividad", "Lugar","Fecha", "Tutor"];
     const body = data.map((row, index) => [
             (index + 1).toString(),
+            row.tipo, // Actividad
             row.actividad, // Actividad
-            row.lugar
+            row.lugar,
+            row.fecha,
+            row.tutor
         ]);
 
     const firstPageStartY = 55;
     let currentY = firstPageStartY;
 
-    doc.autoTable({
+   doc.autoTable({
         head: [headers],
         body: body,
-        startY: currentY,
+        startY: 55,
         headStyles: {
             fillColor: [0, 68, 136],
             textColor: 255,
@@ -177,6 +179,14 @@ function addTable(doc, data, params) {
         },
         bodyStyles: {
             fontSize: 10
+        },
+        columnStyles: {
+            0: { cellWidth: 10 },   // Columna "#"
+            1: { cellWidth: 30 },   // Columna "Tipo"
+            2: { cellWidth: 30 },   // Columna "Actividad"
+            3: { cellWidth: 30 },   // Columna "Lugar"
+            4: { cellWidth: 39 },   // Columna "Fecha"
+            5: { cellWidth: 30 }    // Columna "Tutor"
         },
         margin: {
             top: 55,

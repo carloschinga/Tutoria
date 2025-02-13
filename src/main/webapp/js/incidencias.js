@@ -1,10 +1,10 @@
 $(document).ready(function () {
     let tabla;
 
-    $.getJSON("SemestreAcademicoCRUD",{opcion:1}, function (data) {
+    $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
-            console.log(data.semestre);
+
         } else {
             if (data.mensaje === 'nopermiso') {
                 alert("Error: No tienes permiso para acceder aqui");
@@ -57,6 +57,8 @@ $(document).ready(function () {
 
     $('#crear').on('click', function () {
         $('#modal-incidencia').modal('show');
+        $('#observacion').val('');
+        
     });
     $.fn.listar = function () {
         let codsede = $("#alumno").find('option:selected').data('codigo-sede');
@@ -133,7 +135,9 @@ $(document).ready(function () {
     });
 
     // Guardar actividad
-    $('#guardar').on('click', function () {
+
+
+    $('#guardar').off('click').on('click', function () {
         let codsede = $("#alumno").find('option:selected').data('codigo-sede');
         let coduniv = $("#alumno").val();
         let observacion = $('#observacion').val();
@@ -167,6 +171,8 @@ $(document).ready(function () {
         }
     });
     $('#tabla-estudiantes').on('click', '.btn-modificar', function () {
+
+
         let codtip = String($(this).data("codigotipo"));
         let item = String($(this).data("item"));
         // Seleccionar el tipo actual
@@ -177,7 +183,6 @@ $(document).ready(function () {
         var data = row.data();
         var contenidoTextarea = data.observacion.replace(/<br\s*\/?>/gi, '\n');
 
-// Escapar el contenido para manejar <br> como texto plano si es necesario
         $('#observacion-modificar').val(contenidoTextarea);
 
         // Guardar el ID de la incidencia en un atributo de botón para su uso posterior
@@ -221,10 +226,13 @@ $(document).ready(function () {
             alert('Error, no se encontraron todos los datos completos, vuelva a cargar la pagina y vuelva a intentarlo.');
         }
     });
-    $('#tabla-estudiantes').on('click', '.btn-eliminar', function () {
+    $('#tabla-estudiantes').off('click', '.btn-eliminar').on('click', '.btn-eliminar', function () {
+
         var id = $(this).data('item');
         let codsede = $("#alumno").find('option:selected').data('codigo-sede');
         let coduniv = $("#alumno").val();
+
+
 
         if (coduniv && codsede && id) {
             if (confirm("¿Quieres eliminar esta incidencia?")) {

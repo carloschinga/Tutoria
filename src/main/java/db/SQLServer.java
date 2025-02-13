@@ -30,7 +30,6 @@ public class SQLServer {
             // Establecer la conexión
             this.connection = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
             throw new RuntimeException("Error de conexión con la base de datos", e);
         }
     }
@@ -54,7 +53,6 @@ public class SQLServer {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
             }
         }
     }

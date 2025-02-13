@@ -17,6 +17,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -55,12 +56,12 @@ public class IncidenciasTutoriaJpaController extends JpaPadre {
                 jsonObj.put("modificable", fila[4]);
                 jsonObj.put("tipo", fila[5]);
                 jsonObj.put("codigotipo", fila[6]);
-                jsonObj.put("item", fila[6]);
+                jsonObj.put("item", fila[7]);
                 jsonArray.put(jsonObj);
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {

@@ -8,15 +8,18 @@ import dao.exceptions.NonexistentEntityException;
 import dao.exceptions.PreexistingEntityException;
 import dto.Alumnos;
 import dto.AlumnosPK;
-import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -34,6 +37,22 @@ public class AlumnosJpaController extends JpaPadre {
         try {
             StringBuilder queryString = new StringBuilder();
             queryString.append("SELECT al.CodigoUniversitario, al.CodigoSede, al.Nombres, al.Apellidos, ");
+            queryString.append("t.CodigoDocente, ");
+            queryString.append("ISNULL(s.APaterno, '') + ' ' + ISNULL(s.AMaterno, '') + ' ' + ISNULL(s.Nombre1, '') + ' ' + ISNULL(s.Nombre2, '') AS nombrecompleto ");
+            queryString.append("FROM Matriculas m ");
+            queryString.append("INNER JOIN SemestreAcademico a ON a.Anio = m.Anio AND a.Semestre = m.Semestre AND a.Activo = 1 ");
+            queryString.append("INNER JOIN Alumnos al ON al.CodigoUniversitario = m.CodigoUniversitario AND al.CodigoSede = m.CodigoSede ");
+            queryString.append("LEFT JOIN Tutoria t ON t.CodigoSede = al.CodigoSede AND t.CodigoUniversitario = al.CodigoUniversitario ");
+            queryString.append("AND a.Anio = t.Anio AND a.Semestre = t.Semestre AND t.Estado = 'S' ");
+            queryString.append("LEFT JOIN Docente d ON d.CodigoDocente = t.CodigoDocente AND d.Estado = 1 ");
+            queryString.append("LEFT JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto ");
+            queryString.append("WHERE al.CodigoEscuela = ? AND m.Ciclo = ? ");
+            queryString.append("ORDER BY LTRIM(RTRIM(al.Apellidos)) COLLATE Latin1_General_CI_AS, ");
+            queryString.append("LTRIM(RTRIM(al.Nombres)) COLLATE Latin1_General_CI_AS");
+
+
+            /*StringBuilder queryString = new StringBuilder();
+            queryString.append("SELECT al.CodigoUniversitario, al.CodigoSede, al.Nombres, al.Apellidos, ");
             queryString.append("t.CodigoDocente, s.APaterno + ' ' + s.AMaterno + ' ' + s.Nombre1 + ' ' + s.Nombre2 AS nombrecompleto ");
             queryString.append("FROM Matriculas m ");
             queryString.append("INNER JOIN SemestreAcademico a ON a.Anio = m.Anio AND a.Semestre = m.Semestre AND a.Activo = 1 ");
@@ -43,7 +62,7 @@ public class AlumnosJpaController extends JpaPadre {
             queryString.append("LEFT JOIN Docente d ON d.CodigoDocente = t.CodigoDocente AND d.Estado = 1 ");
             queryString.append("LEFT JOIN Sujeto s ON d.CodigoSujeto = s.CodigoSujeto ");
             queryString.append("WHERE al.CodigoEscuela = ? AND m.Ciclo = ? ");
-            queryString.append("ORDER BY al.Apellidos, al.Nombres");
+            queryString.append("ORDER BY al.Apellidos, al.Nombres");*/
             Query query = em.createNativeQuery(queryString.toString());
             query.setParameter(1, codigoEscuela);
             query.setParameter(2, ciclo);
@@ -61,7 +80,7 @@ public class AlumnosJpaController extends JpaPadre {
             }
             return jsonArray.toString();
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {

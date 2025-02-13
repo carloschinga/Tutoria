@@ -53,13 +53,14 @@ public class BuscarTutor extends HttpServlet {
 
             // Obtener la base de datos desde la sesión
             String empr = (String) session.getAttribute("empr");
+            String codiFacu = (String) session.getAttribute("facultad");
 
             // Consultar el tutor
             TutorDAO tutorDAO = new TutorDAO(empr);
             JSONArray resultado = tutorDAO.obtenerTutoriaPorSemestre(
-                    Integer.parseInt(codiSeme),
+                    Integer.parseInt(codiSeme), 
                     nombreAlumno,
-                    prefijoApellido
+                    prefijoApellido,codiFacu
             );
 
             // Devolver la respuesta en formato JSON

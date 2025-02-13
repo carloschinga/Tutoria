@@ -79,8 +79,7 @@ $(document).ready(function () {
                 codidocente:Docentesseleccionado
             },
             success: function (data) {
-                console.log("Respuesta del servidor:", data);
-                if (data.resultado === "OK" && data.lista.length > 0) {
+                 if (data.resultado === "OK" && data.lista.length > 0) {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,

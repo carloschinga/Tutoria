@@ -33,8 +33,7 @@ $(document).ready(function () {
                 });
     }
     $.getJSON("DocentesCRUD", {opcion: 2, _: new Date().getTime()}, function (data) {
-        console.log("Respuesta del servidor:", data);
-
+      
         if (data.resultado === "ok" && data.nombre) {
             $("#lbldocente").text("DOCENTE: " + data.nombre);
         } else {

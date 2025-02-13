@@ -19,7 +19,7 @@ $(document).ready(function () {
         let semestreSeleccionado = $('#cmbSemestreAcademico').val();
 
         if (!semestreSeleccionado) {
-            alert("Por favor, selecciona un semestre.");
+            alert("Por favor, selecciona un semestre y un tutor.");
             return;
         }
 
@@ -61,8 +61,7 @@ $(document).ready(function () {
                 semestre: codiSemestre
             },
             success: function (data) {
-                console.log("Respuesta del servidor:", data);
-                if (data.resultado === "OK" && data.lista.length > 0) {
+                 if (data.resultado === "OK" && data.lista.length > 0) {
                     // Pasar los datos y los parámetros al generador de PDF
                     exportToPDF(data.lista, {
                         anio: codiAño,

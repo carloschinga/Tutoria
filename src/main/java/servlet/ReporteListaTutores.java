@@ -6,28 +6,17 @@ package servlet;
 
 import com.google.gson.Gson;
 import dao.ReporteTutoresjpaController;
-import db.SQLServer;
 import dto.ReporteTutores;
 import dto.ReporteTutoresParametro;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.util.JRLoader;
 
 /**
  *

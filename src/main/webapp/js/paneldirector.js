@@ -15,14 +15,7 @@ $(document).ready(function () {
                 })
                 .then(data => {
                     if (data.status === "success") {
-                        document.getElementById('cardDdetalle').style.display = 'none';
-                        $("#mensajeAccesoDenegado").show();
-                        setTimeout(() => {
-                            window.close(); // Intentar cerrar la pestaña
-                            if (!window.closed) {
-                                alert("Cierre la pestaña manualmente.");
-                            }
-                        }, 2000);
+                        window.location.href="cerrarsesion.html";
                     } else {
                         alert("Error al cerrar sesión. Inténtelo de nuevo.");
                     }
@@ -56,6 +49,6 @@ $(document).ready(function () {
         $("#cardDdetalle").load("reporteasistenciasdirector.html");
     });
     $("#mnulistaReporteincidencias").click(function () {
-        $("#cardDdetalle").load("ReporteIncidenciasDirector.html");
+        $("#cardDdetalle").load("reporteincidencias.html");
     });
 });

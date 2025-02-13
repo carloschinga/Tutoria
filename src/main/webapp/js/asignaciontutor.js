@@ -7,11 +7,11 @@ $(document).ready(function () {
 
 
     $.getJSON("SemestreAcademicoCRUD", {opcion: 1}, function (data) {
-        console.log("semestre "  );
-         console.log(data);
+
+
         if (data.resultado === "ok") {
             $('#semestre').text(data.semestre);
-            
+
         } else {
             if (data.mensaje === 'nopermiso') {
                 alert("Error: No tienes permiso para acceder aqui");
@@ -22,9 +22,8 @@ $(document).ready(function () {
 
     });
     $.getJSON("EscuelasCRUD", {opcion: 1}, function (data) {
-        console.log("escuelas " );
-        console.log(data);
-        
+
+
         if (data.resultado === "ok") {
             let escuelas = $('#escuelas');
             escuelas.empty().append('<option value="" selected disabled>Selecciona una escuela</option>');
@@ -51,8 +50,7 @@ $(document).ready(function () {
         }
     });
     $.getJSON("DocentesCRUD", {opcion: 1}, function (data) {
-        console.log("docentes " );
-        console.log(data);
+
         if (data.resultado === "ok") {
             let Docentes = $('#Docentes');
             Docentes.html('<option value=""selected disabled>Selecciona un docente</option>');
@@ -83,6 +81,7 @@ $(document).ready(function () {
                 searching: false,
                 paging: false,
                 info: false,
+                order:[[1,'asc']],  
                 "ajax": {
                     "url": "AlumnosCRUD",
                     "type": "POST",
@@ -260,7 +259,7 @@ $(document).ready(function () {
 
         if (datos.length > 0) {
             if (Docente !== null) {
-                console.log(datos);
+
                 $.ajax({
                     url: "TutoriaCRUD?opcion=1&docente=" + Docente,
                     type: "POST",
@@ -339,7 +338,7 @@ $(document).ready(function () {
         });
 
         if (datos.length > 0) {
-            console.log(datos);
+
             $.ajax({
                 url: "TutoriaCRUD?opcion=2",
                 type: "POST",

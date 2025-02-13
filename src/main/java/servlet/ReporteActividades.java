@@ -67,9 +67,10 @@ public class ReporteActividades extends HttpServlet {
                 return;
             }
 
+            String codiDocente= (String)session.getAttribute("codigoDocente");
             // Instanciar el DAO y obtener datos
             ReporteActividadjpaController reporteActividadDAO = new ReporteActividadjpaController(empr);
-            List<ReporteActividad> listaReportes = reporteActividadDAO.obtenerActividadesPorSemestre(codiAño,codiSemestre);
+            List<ReporteActividad> listaReportes = reporteActividadDAO.obtenerActividadesPorSemestre(codiAño,codiSemestre,codiDocente);
 
             
 

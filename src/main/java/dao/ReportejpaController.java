@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dao;
+
 import dto.ReporteTutores;
 import dto.ReporteTutoresParametro;
 import java.util.ArrayList;
@@ -14,12 +15,13 @@ import javax.persistence.Query;
  *
  * @author san21
  */
-public class ReportejpaController extends JpaPadre{
+public class ReportejpaController extends JpaPadre {
 
     public ReportejpaController(String empresa) {
         super(empresa);  // Llamamos al constructor de la clase JpaPadre
     }
 
+    @Override
     public EntityManager getEntityManager() {
         return super.getEntityManager();  // Se aprovecha el EntityManager proporcionado por JpaPadre
     }
@@ -39,25 +41,28 @@ public class ReportejpaController extends JpaPadre{
                 + "WHERE t.CodigoUniversitario LIKE ? AND t.Anio = ? AND t.Semestre = ?";
 
         EntityManager em = getEntityManager();
-        Query nativeQuery = em.createNativeQuery(query);
+        try {
+            Query nativeQuery = em.createNativeQuery(query);
 
-        // Establecer los parámetros de la consulta
-        nativeQuery.setParameter(1, "%" + params.getCodiEscuela() + "%");  // Usamos LIKE para el código de la escuela
-        nativeQuery.setParameter(2, params.getCodiAño());  // Año
-        nativeQuery.setParameter(3, params.getCodiSemestre());  // Semestre
+            // Establecer los parámetros de la consulta
+            nativeQuery.setParameter(1, "%" + params.getCodiEscuela() + "%");  // Usamos LIKE para el código de la escuela
+            nativeQuery.setParameter(2, params.getCodiAño());  // Año
+            nativeQuery.setParameter(3, params.getCodiSemestre());  // Semestre
 
-        // Ejecutar la consulta y obtener los resultados
-        List<Object[]> resultList = nativeQuery.getResultList();
+            // Ejecutar la consulta y obtener los resultados
+            List<Object[]> resultList = nativeQuery.getResultList();
 
-        // Convertir el resultado en objetos DTO
-        List<ReporteTutores> reportData = new ArrayList<>();
-        for (Object[] row : resultList) {
-            String nombre = (String) row[0];
-            String ciclo = (String) row[1];
-            reportData.add(new ReporteTutores(nombre, ciclo));  // Crear un objeto ReporteTutores para cada fila
+            // Convertir el resultado en objetos DTO
+            List<ReporteTutores> reportData = new ArrayList<>();
+            for (Object[] row : resultList) {
+                String nombre = (String) row[0];
+                String ciclo = (String) row[1];
+                reportData.add(new ReporteTutores(nombre, ciclo));  // Crear un objeto ReporteTutores para cada fila
+            }
+
+            return reportData;  // Devolver la lista de objetos
+        } finally {
+            em.close();
         }
-
-        return reportData;  // Devolver la lista de objetos
     }
 }
-

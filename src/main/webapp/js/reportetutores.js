@@ -29,7 +29,7 @@ function addHeader(doc, params) {
     doc.text("Gestión de Tutores", 20, 25);
 
     // Centro: Título del reporte
-    const title = "REPORTE DE TUTORES";
+    const title = "LISTADO DE TUTORES";
     const titleWidth = doc.getTextWidth(title);
     const centerX = (pageWidth - titleWidth) / 2;
     doc.setFontSize(11);
@@ -145,12 +145,9 @@ $(document).ready(function () {
                 codiSemestre: codiSemestre
             },
             beforeSend: function () {
-                console.log("Procesando solicitud para generar el reporte...");
-            },
+             },
             success: function (data, status, xhr) {
-                console.log(data);
-                console.log(data.lista);
-
+   
                 // Pasar los datos y los parámetros al generador de PDF
                 exportToPDF(data.lista, {
                     escuela: escuela,

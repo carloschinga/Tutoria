@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -40,7 +41,7 @@ public class SesionjpaController extends JpaPadre {
                 jsonArray.put(jsonObj);
             }
             return jsonArray.toString();
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {
@@ -67,7 +68,7 @@ public class SesionjpaController extends JpaPadre {
                 jsonArray.put(jsonObj);
             }
             return jsonArray.toString();
-        } catch (Exception e) {
+        } catch (JSONException e) {
             return "{\"Resultado\":\"Error\",\"mensaje\":\"" + e.getMessage() + "\"}";
         } finally {
             if (em != null) {

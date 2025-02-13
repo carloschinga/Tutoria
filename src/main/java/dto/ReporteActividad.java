@@ -5,16 +5,29 @@ public class ReporteActividad {
     private String actividad;
     private String lugar;
     private String tutor;
+    private String tipo;
+    private String fecha;
+
 
     // Constructor
-    public ReporteActividad(String actividad, String lugar,String tutor) {
+    public ReporteActividad( String tipo, String actividad, String lugar, String tutor, String fecha) {
         this.actividad = actividad;
         this.lugar = lugar;
         this.tutor = tutor;
+        this.tipo = tipo;
+        this.fecha = fecha;
     }
 
     public String getTutor() {
         return tutor;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
     public void setTutor(String tutor) {
@@ -36,5 +49,12 @@ public class ReporteActividad {
 
     public void setLugar(String lugar) {
         this.lugar = lugar;
+    }
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }
