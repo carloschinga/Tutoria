@@ -1,48 +1,36 @@
 <html lang="es">
     <head>
         <title>Panel principal</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
     </head>
     <body>
-        Módulo de Tutoría 1.0
-        <!--<button id="btnPanelDirector">Panel Director</button>-->
-        <!--<button id="btnPanelTutor">Panel Tutor</button>-->
-        
-         <br/><!-- comment -->
-        <!--http://localhost:8080/tutoria/paneldirector?admLogin=40801418&codiFacu=03&codiDocente=1623-->
-        <br/>
-        <!--http://localhost:8080/tutoria/paneldirector?admLogin=07260867&codiFacu=10&codiDocente=555-->
-        <br/>
-        <br/><!-- comment -->
-        
-        <!--http://localhost:8080/tutoria/paneltutor?codiDocente=1623&codiFacu=03-->
-        
-        <br/>
+        <h3>Módulo de Tutoría 1.0</h3>
+        <div id="info">Cargando...</div>
 
         <script src="vendor/jquery/jquery.min.js"></script>
         <script >
             $(document).ready(function () {
-                $("#btnPanelTutor").click(function () {
-                     $.get("paneltutor", {admLogin: "40801418", codiFacu: "03"})
-                            .done(function (data) {
-                               
-                            })
-                            .fail(function (jqXHR, textStatus, errorThrown) {
-                                console.error("Error en la solicitud:", textStatus, errorThrown);
-                                alert("Error al acceder al Panel Tutor.");
-                            });
-                });
-                $("#btnPanelDirector").click(function () {
-                    $.get("paneldirector", {admLogin: "40801418", codiFacu: "03"})
-                            .done(function (data) {
-                               
-                            })
-                            .fail(function (jqXHR, textStatus, errorThrown) {
-                                console.error("Error en la solicitud:", textStatus, errorThrown);
-                                alert("Error al acceder al Panel Tutor.");
-                            });
-                });
+
+                $.getJSON("info")
+                        .done(function (data) {
+                            if(data.resultado!=="ok")
+                                $("#info").text(data.mensaje);
+                            else{
+                                let msg=data.Protocol + "=";
+                                msg+=data.Status+ "<br/>";
+                                let msgVersion=data.SQLServer.ProductVersion +"<br/>";
+                                let msgLevel=data.SQLServer.ProductLevel +"<br/>";
+                                let msgEdicion=data.SQLServer.Edition +"<br/>";
+                                
+                                $("#info").html(msg + "Version SQL="+msgVersion + "Level=" + msgLevel + "Edicion=" + msgEdicion);
+                            }
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            console.error("Error en la solicitud:", textStatus, errorThrown);
+
+                        });
+
 
             });
         </script>

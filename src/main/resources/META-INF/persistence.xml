@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-  <persistence-unit name="com.mycompany_tutoria_war_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
-    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>dto.Facultades</class>
-    <class>dto.Alumnos</class>
-    <class>dto.Matriculas</class>
-    <class>dto.SemestreAcademico</class>
-    <class>dto.Docente</class>
-    <class>dto.Escuelas</class>
-    <class>dto.Tutoria</class>
-    <class>dto.TipoActividad</class>
-    <class>dto.TipoIncidencia</class>
-    <class>dto.ActividadTutoria</class>
-    <class>dto.AsistenciaTutoria</class>
-    <class>dto.IncidenciasTutoria</class>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties>
-        <property name="eclipselink.target-server" value="None"/>
-         <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://172.16.1.6:1433;databaseName=dbIntranet;encrypt=false"/>
-      <property name="javax.persistence.jdbc.user" value="Tutoria"/>
-      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="javax.persistence.jdbc.password" value="Tutor@2024"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="com.mycompany_tutoria_war_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>dto.Facultades</class>
+        <class>dto.Alumnos</class>
+        <class>dto.Matriculas</class>
+        <class>dto.SemestreAcademico</class>
+        <class>dto.Docente</class>
+        <class>dto.Escuelas</class>
+        <class>dto.Tutoria</class>
+        <class>dto.TipoActividad</class>
+        <class>dto.TipoIncidencia</class>
+        <class>dto.ActividadTutoria</class>
+        <class>dto.AsistenciaTutoria</class>
+        <class>dto.IncidenciasTutoria</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+            <!--<property name="eclipselink.target-server" value="None"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://172.16.1.6:1433;databaseName=dbIntranet;encrypt=false"/>
+            <property name="javax.persistence.jdbc.user" value="Tutoria"/>
+            <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <property name="javax.persistence.jdbc.password" value="Tutor@2024"/>-->
+            
+            <property name="eclipselink.target-server" value="None"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=dbIntranet;"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <property name="javax.persistence.jdbc.password" value="1234"/>
+        </properties>
+    </persistence-unit>
 </persistence>
