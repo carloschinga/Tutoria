@@ -1,69 +1,55 @@
 $(document).ready(function () {
-
-
     $('#btnBuscarAlumno').on('click', function () {
         let nombreAlumno = $('#inputAlumno').val().trim();
         if (!nombreAlumno) {
-            // Mostramos alerta si el campo está vacío
-            $('#alerta').html("<b>Error:</b> Por favor, ingrese el nombre o apellido del alumno.");
             let alerta = $("#alerta");
-            alerta.removeClass("d-none").hide().fadeIn(300); // Mostrar con fadeIn
-
+            alerta.html("<b>Error:</b> Por favor, ingrese el nombre o apellido del alumno.");
+            alerta.removeClass("d-none").hide().fadeIn(300);
             setTimeout(function () {
                 alerta.fadeOut(1000, function () {
-                    alerta.addClass("d-none"); // Ocultar después del fadeOut
+                    alerta.addClass("d-none");
                 });
             }, 3000);
             return;
         }
 
-        let params = {nombre: nombreAlumno}; // Pasamos nombreCompleto como parámetro
+        let params = { nombre: nombreAlumno };
 
-        // Realizamos la petición AJAX
         $.getJSON("buscaralumno", params, function (data) {
-
-            console.log(data);
             let tablaResultados = $('#tablaResultados');
             let tbody = tablaResultados.find('tbody');
-            tbody.empty(); // Limpiamos la tabla
+            tbody.empty();
 
             if (data.length > 0) {
                 $.each(data, function (index, al) {
-                    let fila = `<tr>                     
-                        
-                         <td>${al.Alumno}</td>
-                     <td><button class="btn btn-primary btn-accion" data-id=${al.CodigoUniversitario}>Imprimir</button></td>
+                    let fila = `<tr>
+                        <td>${al.Alumno}</td>
+                        <td><button class="btn btn-primary btn-accion" data-id="${al.CodigoUniversitario}">Imprimir</button></td>
                     </tr>`;
-                    tbody.append(fila); // Añadimos los resultados en la tabla
+                    tbody.append(fila);
                 });
-                tablaResultados.removeClass('d-none'); // Mostramos la tabla
+                tablaResultados.removeClass('d-none');
             } else {
-                alert("No hay datos");
-                $.fn.mostrarPopup("No se encontraron resultados.");
-                tablaResultados.addClass('d-none'); // Ocultamos la tabla si no hay resultados
+                alert("No se encontraron resultados.");
+                tablaResultados.addClass('d-none');
             }
         }).fail(function () {
-            $.fn.mostrarPopup('<b>Error:</b> No se pudo conectar con el servidor. Intente nuevamente.');
+            alert("Error: No se pudo conectar con el servidor. Intente nuevamente.");
         });
     });
 
     $(document).on('click', 'button.btn-accion', function () {
-        var id = $(this).data('id'); // Obtener el ID del botón
-
-    
-
-
+        var id = $(this).data('id');
         $('#alerta').removeClass('d-none').text('Generando reporte...');
 
         $.ajax({
             url: "ReporteIncidencias",
             method: "GET",
             dataType: "json",
-            data: {termino: id}, // ✅ Se envía todo el texto como 'termino'
+            data: { termino: id },
             success: function (data) {
-               // console.log(data);
                 if (data.resultado === "OK" && data.lista.length > 0) {
-                    exportToPDF(data.lista, {alumno: data[0]});
+                    exportToPDF(data.lista, { alumno: data.lista[0].alumno });
                 } else {
                     alert("No se encontraron incidencias para el alumno ingresado.");
                 }
@@ -77,20 +63,15 @@ $(document).ready(function () {
             }
         });
     });
-
-    $('#btnImprimir').click(function () {
-
-    });
 });
 
 function exportToPDF(data, params) {
-    const {jsPDF} = window.jspdf;
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
     addHeader(doc, params);
 
     if (data.length === 0) {
-        doc.text("No hay datos disponibles para mostrar.", 20, 70);
+        centerText(doc, "No hay datos disponibles para mostrar.", 70);
     } else {
         addTable(doc, data);
     }
@@ -120,23 +101,28 @@ function addHeader(doc, params) {
     }
 }
 
+function centerText(doc, text, y) {
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const textWidth = doc.getTextWidth(text);
+    doc.text(text, (pageWidth - textWidth) / 2, y);
+}
+
 function addTable(doc, data) {
-    const headers = ["#", "Fecha", "Alumno", "Incidencia", "Observación"];
+    const headers = ["#", "Fecha", "Incidencia", "Observación"];
     const body = data.map((row, index) => [
-            (index + 1).toString(),
-            row.fecha || "-",
-            row.alumno || "-",
-            row.incidencia || "-",
-            row.observacion || "-"
-        ]);
+        (index + 1).toString(),
+        row.fecha || "-",
+        row.incidencia || "-",
+        row.observacion || "-"
+    ]);
 
     doc.autoTable({
         head: [headers],
         body: body,
         startY: 50,
-        headStyles: {fillColor: [0, 68, 136], textColor: 255, fontSize: 12, halign: "center"},
-        bodyStyles: {fontSize: 10},
-        margin: {top: 55, right: 20, bottom: 30, left: 20}
+        headStyles: { fillColor: [0, 68, 136], textColor: 255, fontSize: 12, halign: "center" },
+        bodyStyles: { fontSize: 10, halign: "center" },
+        margin: { top: 55, right: 20, bottom: 30, left: 20 }
     });
 }
 

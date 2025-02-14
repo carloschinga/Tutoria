@@ -16,10 +16,11 @@
     <class>dto.IncidenciasTutoria</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=dbIntranet"/>
-      <property name="javax.persistence.jdbc.user" value="sa"/>
+        <property name="eclipselink.target-server" value="None"/>
+        <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://172.16.1.6:1433;databaseName=dbIntranet;encrypt=false"/>
+      <property name="javax.persistence.jdbc.user" value="Tutoria"/>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="javax.persistence.jdbc.password" value="1234"/>
+      <property name="javax.persistence.jdbc.password" value="Tutor@2024"/>
     </properties>
   </persistence-unit>
 </persistence>

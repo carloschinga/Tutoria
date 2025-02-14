@@ -37,6 +37,8 @@ public class PanelTutor extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             String codiDocente = request.getParameter("codiDocente");
+               String codiFacu = request.getParameter("codiFacu");
+        
 
             PanelTutorDAO ptDAO = new PanelTutorDAO("a");
             String resultado = ptDAO.existeTutoriaXFacultad(codiDocente);
@@ -44,12 +46,13 @@ public class PanelTutor extends HttpServlet {
             JSONObject jsonobj = new JSONObject(resultado);
 
             if (jsonobj.getString("Resultado").equals("ok")) {
-               
+
                 HttpSession sesion = request.getSession(true);
                 sesion.setAttribute("codigoDocente", codiDocente);
                 sesion.setAttribute("empr", "a");
-                 response.sendRedirect("paneltutor.html");
-                
+                sesion.setAttribute("facultad", codiFacu);
+                response.sendRedirect("paneltutor.html");
+
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Código 403
                 out.println("<!DOCTYPE html>");
@@ -64,7 +67,7 @@ public class PanelTutor extends HttpServlet {
                 out.println("<body>");
                 out.println("<h2>¡Acceso Denegado!</h2>");
                 out.println("<p>No tienes permiso para acceder a este módulo.</p>");
-                 out.println("</body>");
+                out.println("</body>");
                 out.println("</html>");
             }
 

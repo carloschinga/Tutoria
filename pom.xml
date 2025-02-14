@@ -65,8 +65,9 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>8.2.1.jre8</version>
+            <version>12.4.2.jre11</version> <!-- O la última versión disponible -->
         </dependency>
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>

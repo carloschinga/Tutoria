@@ -2,7 +2,7 @@ $(document).ready(function () {
     // Asigna evento al botón de cerrar sesión
     $("#btnCerrarSesion").click(cerrarSesion);
 
-    function cerrarSesion() {
+   function cerrarSesion() {
         fetch('LogoutServlet', {
             method: 'GET',
             credentials: 'same-origin'
@@ -15,14 +15,7 @@ $(document).ready(function () {
                 })
                 .then(data => {
                     if (data.status === "success") {
-                        document.getElementById('cardDdetalle').style.display = 'none';
-                        $("#mensajeAccesoDenegado").show();
-                        setTimeout(() => {
-                            window.close(); // Intentar cerrar la pestaña
-                            if (!window.closed) {
-                                alert("Cierre la pestaña manualmente.");
-                            }
-                        }, 2000);
+                        window.location.href="cerrarsesion.html";
                     } else {
                         alert("Error al cerrar sesión. Inténtelo de nuevo.");
                     }

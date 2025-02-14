@@ -40,36 +40,39 @@ public class PanelDirector extends HttpServlet {
             String codiFacu = request.getParameter("codiFacu");
             String codidoce = request.getParameter("codiDocente");
 
-            PanelDirectorDAO pdDAO = new PanelDirectorDAO("a");
-            String resultado = pdDAO.existeDirectorTutoriaXFacultad(admLogin, codiFacu, codidoce);
+            try {
+                PanelDirectorDAO pdDAO = new PanelDirectorDAO("a");
+                String resultado = pdDAO.existeDirectorTutoriaXFacultad(admLogin, codiFacu, codidoce);
+                JSONObject jsonobj = new JSONObject(resultado);
 
-            JSONObject jsonobj = new JSONObject(resultado);
+                if (jsonobj.getString("Resultado").equals("ok")) {
 
-            if (jsonobj.getString("Resultado").equals("ok")) {
+                    HttpSession sesion = request.getSession(true);
+                    sesion.setAttribute("director", admLogin);
+                    sesion.setAttribute("facultad", codiFacu);
+                    sesion.setAttribute("codigoDocente", codidoce);
+                    sesion.setAttribute("empr", "a");
+                    response.sendRedirect("paneldirector.html");
 
-                HttpSession sesion = request.getSession(true);
-                sesion.setAttribute("director", admLogin);
-                sesion.setAttribute("facultad", codiFacu);
-                sesion.setAttribute("codigoDocente", codidoce);
-                sesion.setAttribute("empr", "a");
-                response.sendRedirect("paneldirector.html");
-
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Código 403
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Acceso Denegado</title>");
-                out.println("<style>");
-                out.println("body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }");
-                out.println("h2 { color: red; }");
-                out.println("</style>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h2>¡Acceso Denegado!</h2>");
-                out.println("<p>No tienes permiso para acceder a este módulo.</p>");
-                out.println("</body>");
-                out.println("</html>");
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Código 403
+                    out.println("<!DOCTYPE html>");
+                    out.println("<html>");
+                    out.println("<head>");
+                    out.println("<title>Acceso Denegado</title>");
+                    out.println("<style>");
+                    out.println("body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }");
+                    out.println("h2 { color: red; }");
+                    out.println("</style>");
+                    out.println("</head>");
+                    out.println("<body>");
+                    out.println("<h2>¡Acceso Denegado!</h2>");
+                    out.println("<p>No tienes permiso para acceder a este módulo.</p>");
+                    out.println("</body>");
+                    out.println("</html>");
+                }
+            } catch (Exception ex) {
+                out.print(ex.getMessage());
             }
 
         }
