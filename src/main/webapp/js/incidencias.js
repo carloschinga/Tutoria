@@ -58,7 +58,7 @@ $(document).ready(function () {
     $('#crear').on('click', function () {
         $('#modal-incidencia').modal('show');
         $('#observacion').val('');
-        
+
     });
     $.fn.listar = function () {
         let codsede = $("#alumno").find('option:selected').data('codigo-sede');
@@ -171,26 +171,38 @@ $(document).ready(function () {
         }
     });
     $('#tabla-estudiantes').on('click', '.btn-modificar', function () {
+        let coduniv = $("#alumno").val();
+        if (!coduniv) {
+            alert("Error: Por favor, selecciona un alumno primero.");
+            return;
+        }
 
+        if (!$.fn.DataTable.isDataTable('#tabla-estudiantes')) {
+            alert("Error: La tabla no está inicializada. Por favor, selecciona un alumno primero.");
+            return;
+        }
 
         let codtip = String($(this).data("codigotipo"));
         let item = String($(this).data("item"));
-        // Seleccionar el tipo actual
+
         $('#tipo-modificar').val(codtip);
 
-        var row = tabla.row($(this).closest('tr'));
+        let row = $('#tabla-estudiantes').DataTable().row($(this).closest('tr'));
 
-        var data = row.data();
-        var contenidoTextarea = data.observacion.replace(/<br\s*\/?>/gi, '\n');
+        if (!row.data()) {
+            alert("Error: No se pudo encontrar la fila correspondiente.");
+            return;
+        }
+
+        let data = row.data();
+        let contenidoTextarea = data.observacion.replace(/<br\s*\/?>/gi, '\n');
 
         $('#observacion-modificar').val(contenidoTextarea);
-
-        // Guardar el ID de la incidencia en un atributo de botón para su uso posterior
         $('#guardar-modificacion').data('id', item);
 
-        // Mostrar el modal de modificar
         $('#modal-modificar').modal('show');
     });
+
 
     $('#guardar-modificacion').on('click', function () {
         var id = $(this).data('id');

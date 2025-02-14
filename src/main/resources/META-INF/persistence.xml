@@ -17,7 +17,7 @@
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
         <property name="eclipselink.target-server" value="None"/>
-        <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://172.16.1.6:1433;databaseName=dbIntranet;encrypt=false"/>
+         <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://172.16.1.6:1433;databaseName=dbIntranet;encrypt=false"/>
       <property name="javax.persistence.jdbc.user" value="Tutoria"/>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
       <property name="javax.persistence.jdbc.password" value="Tutor@2024"/>
